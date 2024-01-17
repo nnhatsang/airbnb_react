@@ -6,7 +6,7 @@ import { Modal, message } from "antd";
 import { Auth } from "../../Services/Auth";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { setLocal } from "../../Utils/Local";
+import { setLocal, userLocalStorage } from "../../Utils/Local";
 import { setUser } from "../../Redux/UserSlice";
 import * as Yup from "yup";
 
@@ -16,8 +16,8 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMenuLogin, setIsMenuLogin] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(false);
 
   // login
   const dispatch = useDispatch();
@@ -59,6 +59,10 @@ const Header = () => {
     setShowLogin(!showLogin);
     setIsMenuLogin(false);
   };
+  const toggleModalSignUp = () => {
+    setShowSignUp(!showSignUp);
+    // setIsMenuLogin(false);
+  };
 
   const additionalClass = scrolling
     ? "costum-navbar text-black "
@@ -78,13 +82,13 @@ const Header = () => {
         console.log(values);
         Auth.post_login(values)
           .then((res) => {
-            console.log(res);
+            // console.log(res);
             message.success("Đăng nhập thành công");
             // messageApi.open({
             //   type: "success",
             //   content: "Đăng nhập thành công",
             // });
-            setLocal(res.data.content, "user_info");
+            userLocalStorage.set(res.data.content);
             dispatch(setUser(res.data.content));
             setTimeout(() => {
               window.location.reload();
@@ -92,11 +96,14 @@ const Header = () => {
           })
           .catch((err) => {
             // message.error("Thất bại");
-            messageApi.open({
-              type: "error",
-              content: err.response.data.content,
-            });
-            console.log(err);
+            // messageApi.open({
+            //   type: "error",
+            //   content: err.response.data.content,
+            // });
+            //
+            message.error(err.response.data.content);
+
+            // console.log(err);
           });
       },
       validationSchema: Yup.object({
@@ -107,13 +114,12 @@ const Header = () => {
 
   // render login user
   const renderUser = () => {
-    console.log(user);
     if (user) {
       return (
         <>
           <button
             type="button"
-            className="flex text-sm  rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 "
+            className="flex   rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 hover:font-bold duration-300"
             id="user-menu-button"
             aria-expanded="false"
             data-dropdown-toggle="user-dropdown"
@@ -127,6 +133,7 @@ const Header = () => {
               src="https://cdn-icons-png.flaticon.com/512/6596/6596121.png"
               alt="user photo"
             />
+            <span className=" ml-3  leading-7 ">{user.user.name}</span>
           </button>
 
           <div
@@ -183,7 +190,7 @@ const Header = () => {
       return (
         <>
           <button
-            className=" text-sm bg-[#FE6B6E] py-2 px-5 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 font-bold"
+            className=" text-sm bg-main py-2 px-5 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 font-bold"
             onClick={toggleLogin}
           >
             Login
@@ -194,7 +201,7 @@ const Header = () => {
   };
   return (
     <>
-      {contextHolder}
+      {/* {contextHolder} */}
 
       <nav
         className={`bg-transparent z-[990] py-5 fixed w-full nav-menu ${additionalClass} duration-500 smm:bg-black   lg:bg-transparent`}
@@ -232,9 +239,12 @@ const Header = () => {
                     </button>
                   </li>
                   <li>
-                    <buton className="block text-center px-5 w-full rounded py-2 text-sm text-gray-700 hover:bg-gray-300 ">
+                    <button
+                      onClick={toggleModalSignUp}
+                      className="block text-center px-5 w-full rounded py-2 text-sm text-gray-700 hover:bg-gray-300 "
+                    >
                       Đăng ký
-                    </buton>
+                    </button>
                   </li>
                 </ul>
               </div>
@@ -321,6 +331,7 @@ const Header = () => {
           </div>
         </div>
       </nav>
+      {/* login */}
       <Modal
         // title="Đăng nhập"
         open={showLogin}
@@ -329,7 +340,7 @@ const Header = () => {
         centered
       >
         <form onSubmit={handleSubmit} className="space-y-5">
-          <h2 className="font-bold text-3xl text-center">Đăng nhập Movie</h2>
+          <h2 className="font-bold text-3xl text-center">Đăng nhập Airbnb</h2>
           <div>
             <label
               htmlFor="email"
@@ -381,6 +392,15 @@ const Header = () => {
             </button>
           </div>
         </form>
+      </Modal>
+      {/* signUp */}
+      <Modal
+        open={showSignUp}
+        onCancel={toggleModalSignUp}
+        // footer={null}
+        centered
+      >
+        <h1>kún</h1>
       </Modal>
     </>
   );

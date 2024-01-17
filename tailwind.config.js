@@ -5,7 +5,10 @@ module.exports = {
   theme: {
     extend: {
       container: {
-        center: "true",
+        center: true,
+      },
+      colors: {
+        main: "#FE6B6E",
       },
     },
     screens: {

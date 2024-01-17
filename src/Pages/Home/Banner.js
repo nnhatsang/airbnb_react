@@ -1,7 +1,7 @@
 import React from "react";
 import "./Banner.scss";
 import camping from "./../../Assets/Images/undraw_camping_noc8.svg";
-import logo from "./../../Assets/Images/airbnb-1.svg"
+import logo from "./../../Assets/Images/airbnb-1.svg";
 
 const Banner = () => {
   return (
@@ -20,14 +20,14 @@ const Banner = () => {
         <div className="container z-10 smm:px-20 lg:px-10">
           <div className="grid grid-cols-2">
             <div className="justify-center flex flex-col smm:col-span-2 smm:items-center ">
-              <div className="flex items-center">
-              <img src={logo} alt="" className="w-14 mr-5 smm:w-10"/>
-                <h2 className=" mb-4 lg:text-8xl md:text-5xl  smm:text-5xl mb:text-3xl  text-[#FE6B6E] font-bold animate__animated animate__fadeInUp ">
+              <div className="flex items-center smm:justify-center">
+                <img src={logo} alt="" className="w-14 mr-5 smm:w-10" />
+                <h2 className=" mb-4 lg:text-8xl md:text-5xl  smm:text-5xl mb:text-3xl  text-[#FE6B6E] font-bold animate__animated animate__fadeInUp smm:h-full">
                   airbnb
                 </h2>
               </div>
-              <p className="animate__animated animate__fadeInUp animate__delay-1s md:text-xl text-white lg:text-3xl md:text-xl smm:text-lg smm:flex smm:justify-center">
-                Chuyến đi của sự trải nghiệm
+              <p className="animate__animated animate__fadeInUp animate__delay-1s md:text-xl text-white lg:text-3xl md:text-xl smm:text-lg smm:flex smm:justify-center ">
+                Belong anywhere
               </p>
             </div>
             <div className="item w-full  flex  justify-center animate__animated animate__fadeInUp animate__delay-3s">
@@ -40,6 +40,8 @@ const Banner = () => {
         src="https://i.ibb.co/v4KS2mc/swoosh-hero.png"
         class="banner-responsive circular w-full absolute "
       />
+      
+      <div className="z-50 mt-10"></div>
     </>
   );
 };

@@ -8,3 +8,17 @@ export const getLocal = (key = "user_info") => {
   const data = localStorage.getItem(key);
   return data ? JSON.parse(data) : null;
 };
+
+export const userLocalStorage = {
+  get: () =>
+    localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user"))
+      : null,
+  set: (userDataContentInfo) => {
+    const dataJson = JSON.stringify(userDataContentInfo);
+    localStorage.setItem("user", dataJson);
+  },
+  remove: () => {
+    localStorage.removeItem("user");
+  },
+};

@@ -1,6 +1,6 @@
 import axios from "axios";
-import { getLocal } from "./../Utils/Local";
-let dataUser = getLocal();
+import { getLocal, userLocalStorage } from "./../Utils/Local";
+let dataUser = userLocalStorage.get();
 
 export const API = axios.create({
   baseURL: "https://airbnbnew.cybersoft.edu.vn",
