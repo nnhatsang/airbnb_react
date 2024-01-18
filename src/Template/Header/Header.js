@@ -2,16 +2,29 @@ import React, { useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import $ from "jquery"; // Import jQuery
 import "./Header.scss";
-import { Modal, message } from "antd";
+import {
+  ConfigProvider,
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Select,
+  message,
+} from "antd";
 import { Auth } from "../../Services/Auth";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { setLocal, userLocalStorage } from "../../Utils/Local";
-import { setUser } from "../../Redux/UserSlice";
+import { setLogin } from "../../Redux/UserSlice";
 import * as Yup from "yup";
+import viVN from "antd/lib/locale/vi_VN"; // Import ngôn ngữ tiếng Việt
+import FormItem from "antd/es/form/FormItem";
+import dayjs from "dayjs";
 
 const Header = () => {
   const { user } = useSelector((state) => state.UserSlice);
+  // const user = userLocalStorage.get();
+
   const [scrolling, setScrolling] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMenuLogin, setIsMenuLogin] = useState(false);
@@ -19,10 +32,14 @@ const Header = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
 
+  // mode
+  const [mode, setMode] = useState("login"); // "login" hoặc "signup"
+
   // login
   const dispatch = useDispatch();
-  const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
+
+  // signUp
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,12 +73,14 @@ const Header = () => {
     setIsMenuLogin(!isMenuLogin);
   };
   const toggleModalLogin = () => {
+    setMode("login");
     setShowLogin(!showLogin);
     setIsMenuLogin(false);
   };
   const toggleModalSignUp = () => {
+    setMode("signup");
     setShowSignUp(!showSignUp);
-    // setIsMenuLogin(false);
+    setIsMenuLogin(false);
   };
 
   const additionalClass = scrolling
@@ -72,45 +91,103 @@ const Header = () => {
     : " hidden";
   // login
 
-  const { handleSubmit, handleChange, handleBlur, values, errors, touched } =
-    useFormik({
-      initialValues: {
-        email: "",
-        password: "",
-      },
-      onSubmit: (values) => {
-        console.log(values);
-        Auth.post_login(values)
-          .then((res) => {
-            // console.log(res);
-            message.success("Đăng nhập thành công");
-            // messageApi.open({
-            //   type: "success",
-            //   content: "Đăng nhập thành công",
-            // });
-            userLocalStorage.set(res.data.content);
-            dispatch(setUser(res.data.content));
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000);
-          })
-          .catch((err) => {
-            // message.error("Thất bại");
-            // messageApi.open({
-            //   type: "error",
-            //   content: err.response.data.content,
-            // });
-            //
-            message.error(err.response.data.content);
+  const {
+    handleSubmit,
+    handleChange,
+    handleBlur,
+    values,
+    errors,
+    touched,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+      phone: "",
+      birthday: "",
+      gender: true,
+    },
 
-            // console.log(err);
-          });
-      },
-      validationSchema: Yup.object({
-        email: Yup.string().required("Vui lòng không bỏ trống"),
-        password: Yup.string().required("Vui lòng không bỏ trống"),
+    onSubmit: (values) => {
+      switch (mode) {
+        case "login": {
+          Auth.post_login(values)
+            .then((res) => {
+              message.success("Đăng nhập thành công");
+              // messageApi.open({
+              //   type: "success",
+              //   content: "Đăng nhập thành công",
+              // });
+              const data = {
+                ...res.data.content.user,
+                token: res.data.content.token,
+              };
+              dispatch(setLogin({ ...data }));
+              userLocalStorage.set({ ...data });
+              toggleModalLogin();
+              navigate("/");
+              // userLocalStorage.set(res.data.content);
+              // dispatch(setLogin(res.data.content));
+              // setTimeout(() => {
+              //   window.location.reload();
+              // }, 1000);
+            })
+            .catch((err) => {
+              // message.error("Thất bại");
+              // messageApi.open({
+              //   type: "error",
+              //   content: err.response.data.content,
+              // });
+              //
+              message.error(err.response.data.content);
+
+              // console.log(err);
+            });
+          break;
+        }
+        case "signup": {
+          console.log(mode);
+          Auth.post_signup(values)
+            .then((res) => {
+              console.log(res);
+              message.success("Đăng ký thành công")
+              toggleModalLogin()
+            })
+            .catch((err) => console.log(err));
+          break;
+        }
+        default:
+          console.log(mode);
+          return null;
+      }
+    },
+
+    validationSchema: Yup.object().shape({
+      email: Yup.string()
+        .required("Vui lòng không bỏ trống")
+        .email("Vui lòng nhập đúng định dạng email"),
+      password: Yup.string().required("Vui lòng không bỏ trống"),
+      // Thêm các điều kiện kiểm tra cho registration
+      name: Yup.string().when("mode", {
+        is: "signup",
+        then: Yup.string().required("Vui lòng không bỏ trống"),
       }),
-    });
+      phone: Yup.string().when("mode", {
+        is: "signup",
+        then: Yup.string()
+          .required("Vui lòng không bỏ trống")
+          .matches(/^[0-9]{10}$/, "Số điện thoại không hợp lệ"),
+      }),
+      birthday: Yup.string().when("mode", {
+        is: "signup",
+        then: Yup.string().required("Vui lòng chọn ngày sinh"),
+      }),
+      gender: Yup.string().when("mode", {
+        is: "signup",
+        then: Yup.string().required("Vui lòng chọn giới tính"),
+      }),
+    }),
+  });
 
   // render login user
   const renderUser = () => {
@@ -133,7 +210,7 @@ const Header = () => {
               src="https://cdn-icons-png.flaticon.com/512/6596/6596121.png"
               alt="user photo"
             />
-            <span className=" ml-3  leading-7 ">{user.user.name}</span>
+            <span className=" ml-3  leading-7 ">{user.name}</span>
           </button>
 
           <div
@@ -145,11 +222,9 @@ const Header = () => {
             id="user-dropdown"
           >
             <div className="px-4 py-3">
-              <span className="block text-sm text-gray-900 ">
-                {user.user.name}
-              </span>
+              <span className="block text-sm text-gray-900 ">{user.name}</span>
               <span className="block text-sm  text-gray-500 truncate ">
-                {user.user.email}
+                {user.email}
               </span>
             </div>
             <ul className="py-2" aria-labelledby="user-menu-button">
@@ -171,7 +246,7 @@ const Header = () => {
               <li>
                 <button
                   onClick={() => {
-                    localStorage.removeItem("user_info");
+                    localStorage.removeItem("user");
                     message.success("Đăng xuất thành công!");
                     setTimeout(() => {
                       window.location.reload();
@@ -334,6 +409,7 @@ const Header = () => {
       {/* login */}
       <Modal
         // title="Đăng nhập"
+        // ah anh
         open={showLogin}
         onCancel={toggleModalLogin}
         footer={null}
@@ -346,7 +422,7 @@ const Header = () => {
               htmlFor="email"
               className="block mb-2 text-sm font-medium text-gray-900 "
             >
-              Tài khoản
+              Email
             </label>
             <input
               type="text"
@@ -382,11 +458,40 @@ const Header = () => {
             {errors.password && touched.password ? (
               <p className="text-red-500 text-xs mt-1">{errors.password}</p>
             ) : null}
+            {/* <FormItem
+              label={
+                <span className="block  text-sm font-medium text-gray-900">
+                  Password
+                </span>
+              }
+              name="password"
+              validateStatus={
+                errors.password && touched.password ? "error" : ""
+              }
+              help={errors.password && touched.password && errors.password}
+            >
+              <Input.Password
+                name="password"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.password}
+                placeholder="Điền mật khẩu...."
+              />
+            </FormItem> */}
           </div>
           <div className="flex  justify-end">
             <button
+              className="py-2 px-5 bg-main text-white rounded-md hover:bg-opacity-70 duration-500"
+              onClick={() => {
+                toggleModalLogin();
+                toggleModalSignUp();
+              }}
+            >
+              Đăng ký
+            </button>
+            <button
               type="submit"
-              className="py-2 px-5 bg-black text-white rounded-md hover:bg-opacity-70 duration-500"
+              className="py-2 px-5 bg-black ml-5 text-white rounded-md hover:bg-opacity-70 duration-500"
             >
               Đăng nhập
             </button>
@@ -397,10 +502,153 @@ const Header = () => {
       <Modal
         open={showSignUp}
         onCancel={toggleModalSignUp}
-        // footer={null}
+        footer={null}
         centered
       >
-        <h1>kún</h1>
+        {/* khúc này là sao nữa ak?????
+        này là dk á
+        */}
+        <ConfigProvider locale={viVN}>
+          <Form layout="vertical" className="space-y-5" onFinish={handleSubmit}>
+            <h2 className="font-bold lg:text-3xl smm:text-xl text-center mb-5">
+              Đăng ký tài khoản Airbnb
+            </h2>
+            <div className="">
+              <FormItem
+                label={
+                  <span className="block  text-sm font-medium text-gray-900">
+                    Name
+                  </span>
+                }
+                name="name"
+                validateStatus={errors.name && touched.name ? "error" : ""}
+                help={errors.name && touched.name && errors.name}
+              >
+                <Input
+                  name="name"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.name}
+                  placeholder="Điền tên vào đây..."
+                />
+              </FormItem>
+              <FormItem
+                label={
+                  <span className="block  text-sm font-medium text-gray-900">
+                    Email
+                  </span>
+                }
+                name="email"
+                validateStatus={errors.email && touched.email ? "error" : ""}
+                help={errors.email && touched.email && errors.email}
+              >
+                <Input
+                  name="email"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.email}
+                  placeholder="Điền tên vào đây..."
+                />
+              </FormItem>
+              <FormItem
+                label={
+                  <span className="block  text-sm font-medium text-gray-900">
+                    Password
+                  </span>
+                }
+                name="password"
+                validateStatus={
+                  errors.password && touched.password ? "error" : ""
+                }
+                help={errors.password && touched.password && errors.password}
+              >
+                <Input.Password
+                  name="password"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.password}
+                  placeholder="Điền mật khẩu...."
+                />
+              </FormItem>
+              <FormItem
+                label={
+                  <span className="block  text-sm font-medium text-gray-900">
+                    Phone number
+                  </span>
+                }
+                name="phone"
+                validateStatus={errors.phone && touched.phone ? "error" : ""}
+                help={errors.phone && touched.phone && errors.phone}
+              >
+                <Input
+                  type="tel"
+                  name="phone"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.phone}
+                  placeholder="Điền số điện thoại...."
+                />
+              </FormItem>
+              <div className="flex gap-5">
+                <FormItem
+                  label={
+                    <span className="block  text-sm font-medium text-gray-900">
+                      Birthday
+                    </span>
+                  }
+                  name="birthday"
+                  validateStatus={
+                    errors.birthday && touched.birthday ? "error" : ""
+                  }
+                  help={errors.birthday && touched.birthday && errors.birthday}
+                >
+                  <DatePicker
+                    name="birthday"
+                    // onChange={handleChange}
+                    onChange={(date, dateString) => {
+                      setFieldValue("birthday", date);
+                    }}
+                    changeOnBlur={handleBlur}
+                    value={values.birthday ? dayjs(values.birthday) : ""}
+                    placeholder="Chọn ngày sinh"
+                    format="DD/MM/YYYY"
+                  />
+                </FormItem>
+                <FormItem
+                  label={
+                    <span className="block text-sm font-medium text-gray-900">
+                      Gender
+                    </span>
+                  }
+                  name="gender" // Đặt name cho FormItem
+                  validateStatus={
+                    errors.gender && touched.gender ? "error" : ""
+                  }
+                  help={errors.gender && touched.gender && errors.gender}
+                >
+                  <Select
+                    name="gender" // Đặt name cho Select
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.gender}
+                    placeholder="Chọn giới tính"
+                  >
+                    <Select.Option value="male">Nam</Select.Option>
+                    <Select.Option value="female">Nữ</Select.Option>
+                  </Select>
+                </FormItem>
+              </div>
+            </div>
+            <div className="mt-9">
+              <button
+                type="submit"
+                className="cursor-pointer text-white w-full bg-main hover:bg-pink-700 duration-300 px-6 py-2 rounded-lg"
+              >
+                Đăng ký
+              </button>
+            </div>
+          </Form>
+        </ConfigProvider>
       </Modal>
     </>
   );

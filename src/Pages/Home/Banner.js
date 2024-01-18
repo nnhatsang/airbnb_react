@@ -41,7 +41,7 @@ const Banner = () => {
         class="banner-responsive circular w-full absolute "
       />
       
-      <div className="z-50 mt-10"></div>
+    
     </>
   );
 };
