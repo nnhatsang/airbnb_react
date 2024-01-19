@@ -5,7 +5,7 @@ const Loading = () => {
   const { isLoading } = useSelector((state) => state.SpinnerSlice);
   return (
     <div
-      className="fixed inset-0 bg-black/80  flex items-center justify-center"
+      className="fixed inset-0 bg-white   flex items-center justify-center"
       style={{ zIndex: 9999 }}
     >
       <svg

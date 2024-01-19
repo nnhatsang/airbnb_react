@@ -4,6 +4,7 @@ import { Vitri } from "../../Services/Vitri";
 import { TabTitle } from "../../Utils/SetTitle";
 import LcateExplore from "./LcateExplore";
 import { useDispatch } from "react-redux";
+import FilterNav from "../../Components/FilterNav/FilterNav";
 
 const HomePage = () => {
   TabTitle("Airbnb-Nhà nghỉ dưỡng & Căn hộ cao cấp cho thuê");
@@ -18,9 +19,8 @@ const HomePage = () => {
   return (
     <>
       <Banner />
-      <div>
-        <LcateExplore />
-      </div>
+      <LcateExplore />
+      <FilterNav />
     </>
   );
 };

@@ -20,7 +20,9 @@ import * as Yup from "yup";
 import viVN from "antd/lib/locale/vi_VN"; // Import ngôn ngữ tiếng Việt
 import FormItem from "antd/es/form/FormItem";
 import dayjs from "dayjs";
+import FilterNav from "../../Components/FilterNav/FilterNav";
 
+import logo from "./../../Assets/Images/airbnb-1.svg";
 const Header = () => {
   const { user } = useSelector((state) => state.UserSlice);
   // const user = userLocalStorage.get();
@@ -73,11 +75,13 @@ const Header = () => {
     setIsMenuLogin(!isMenuLogin);
   };
   const toggleModalLogin = () => {
+    resetForm();
     setMode("login");
     setShowLogin(!showLogin);
     setIsMenuLogin(false);
   };
   const toggleModalSignUp = () => {
+    resetForm();
     setMode("signup");
     setShowSignUp(!showSignUp);
     setIsMenuLogin(false);
@@ -99,6 +103,7 @@ const Header = () => {
     errors,
     touched,
     setFieldValue,
+    resetForm,
   } = useFormik({
     initialValues: {
       email: "",
@@ -143,6 +148,7 @@ const Header = () => {
 
               // console.log(err);
             });
+          resetForm();
           break;
         }
         case "signup": {
@@ -150,10 +156,11 @@ const Header = () => {
           Auth.post_signup(values)
             .then((res) => {
               console.log(res);
-              message.success("Đăng ký thành công")
-              toggleModalLogin()
+              message.success("Đăng ký thành công");
+              toggleModalLogin();
             })
             .catch((err) => console.log(err));
+          resetForm();
           break;
         }
         default:
@@ -286,7 +293,7 @@ const Header = () => {
             to={"/"}
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
-            <img src="./airbnb.png" className="h-8" alt="Airbnb Logo" />
+            <img src={logo} className="h-8" alt="Airbnb Logo" />
             <span className="self-center text-2xl font-semi font-bold whitespace-nowrap  text-[#FE6B6E] duration-500 hover:text-rose-600">
               airbnb
             </span>
@@ -603,6 +610,7 @@ const Header = () => {
                   help={errors.birthday && touched.birthday && errors.birthday}
                 >
                   <DatePicker
+                    placement={"topRight"}
                     name="birthday"
                     // onChange={handleChange}
                     onChange={(date, dateString) => {
