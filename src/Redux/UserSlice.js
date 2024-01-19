@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getLocal, userLocalStorage } from "../Utils/Local";
 import dayjs from "dayjs";
+import { userLocalStorage } from "../Utils/Local";
 
 const initialState = {
   user: userLocalStorage.get(),
