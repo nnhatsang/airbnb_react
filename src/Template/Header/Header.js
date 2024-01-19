@@ -210,7 +210,7 @@ const Header = () => {
               src="https://cdn-icons-png.flaticon.com/512/6596/6596121.png"
               alt="user photo"
             />
-            <span className=" ml-3  leading-7 ">{user.name}</span>
+            <span className=" ml-3 smm:text-white leading-7 ">{user.name}</span>
           </button>
 
           <div
@@ -357,7 +357,7 @@ const Header = () => {
           <div
             className={`items-center w-full md:flex md:w-auto md:order-1 ${menuClass} duration-500`}
           >
-            <ul className="menu-phone flex flex-col font-medium p-4 md:p-0 mt-4 border  border-gray-100 rounded-lg  md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 ">
+            <ul className="menu-phone flex flex-col font-medium p-4 md:p-0 mt-4 border smm:text-white border-gray-100 rounded-lg  md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 ">
               <li>
                 <NavLink
                   to={"/"}

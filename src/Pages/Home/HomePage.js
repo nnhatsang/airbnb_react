@@ -3,9 +3,11 @@ import Banner from "./Banner";
 import { Vitri } from "../../Services/Vitri";
 import { TabTitle } from "../../Utils/SetTitle";
 import LcateExplore from "./LcateExplore";
+import { useDispatch } from "react-redux";
 
 const HomePage = () => {
   TabTitle("Airbnb-Nhà nghỉ dưỡng & Căn hộ cao cấp cho thuê");
+  const dispatch = useDispatch();
 
   const [vitri, setVitri] = useState([]);
   // useEffect(() => {
@@ -16,7 +18,7 @@ const HomePage = () => {
   return (
     <>
       <Banner />
-      <div style={{ zIndex: 999 }}>
+      <div>
         <LcateExplore />
       </div>
     </>
