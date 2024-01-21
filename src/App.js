@@ -5,7 +5,10 @@ import HomePage from "./Pages/Home/HomePage";
 import { Suspense } from "react";
 import Loading from "./Components/Loading/Loading";
 import "swiper/css";
-import RoomLocate from "./Pages/Home/RoomLocate/RoomLocate";
+import RoomLocate from "./Pages/RoomLocate/RoomLocate";
+import ListRoom from "./Pages/ListRoom/ListRoom";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 
 function App() {
   return (
@@ -13,7 +16,8 @@ function App() {
       <Routes>
         <Route path="/" element={<UserTemplate />}>
           <Route index element={<HomePage />} />
-          <Route path="roomsCity" element={<RoomLocate />} />
+          <Route path="filterRoom/:cityName" element={<RoomLocate />} />
+          <Route path="listRoom" element={<ListRoom />} />
         </Route>
       </Routes>
     </>

@@ -14,8 +14,8 @@ export const userLocalStorage = {
     localStorage.getItem("user")
       ? JSON.parse(localStorage.getItem("user"))
       : null,
-  set: (userDataContentInfo) => {
-    const dataJson = JSON.stringify(userDataContentInfo);
+  set: (data) => {
+    const dataJson = JSON.stringify(data);
     localStorage.setItem("user", dataJson);
   },
   remove: () => {

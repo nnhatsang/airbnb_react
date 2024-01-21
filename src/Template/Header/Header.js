@@ -387,7 +387,7 @@ const Header = () => {
               </li>
               <li>
                 <NavLink
-                  to={"/services"}
+                  to={"/listroom"}
                   className="block py-2 px-3 rounded hover:bg-gray-100 hover:text-black md:hover:bg-transparent md:hover:text-blue-700 md:p-0 duration-300"
                 >
                   Services
