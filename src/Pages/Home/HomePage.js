@@ -19,8 +19,8 @@ const HomePage = () => {
   return (
     <>
       <Banner />
-      <LcateExplore />
       <FilterNav />
+      <LcateExplore />
     </>
   );
 };

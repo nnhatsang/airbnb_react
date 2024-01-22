@@ -16,11 +16,9 @@ const FilterNav = () => {
   const [showSearchLocation, setShowSearchLocation] = useState(false);
   const [showSearchDateRange, setShowSearchDateRange] = useState(false);
   const [showSearchGuests, setShowSearchGuests] = useState(false);
-  const [extendSearchBar, setExtendSearchBar] = useState(false);
   const overlayRef = useRef(null);
   const handleClickOutside = (event) => {
     if (overlayRef.current && overlayRef.current.contains(event.target)) {
-      setExtendSearchBar(false);
       setShowSearchLocation(false);
       setShowSearchDateRange(false);
       setShowSearchGuests(false);
@@ -31,7 +29,7 @@ const FilterNav = () => {
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [extendSearchBar]);
+  }, []);
   const [cities, setCities] = useState([]);
 
   useEffect(() => {
@@ -48,69 +46,76 @@ const FilterNav = () => {
 
   return (
     <>
-      <div className="container py-6 ">
+      <div className="container py-10 relative ">
         {showSearchLocation && (
-          <div className="absolute w-[500px] top-[70px] left-0 bg-white rounded-lg p-6 border-2 border-gray-300 overflow-y-auto overscroll-y-auto cursor-auto max-h-[calc(100vh-250px)]">
+          <div className="absolute w-[40vh] top-[70px] left-0 z-50 bg-white rounded-lg p-6 border-2 border-gray-300 overflow-y-auto overscroll-y-auto cursor-auto max-h-[calc(800px-250px)]">
             <h1 className="font-bold text-md mb-6">Tìm kiếm địa điểm</h1>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
               {cities?.map((item, index) => (
                 <div
                   key={index}
                   onClick={() => {
                     dispatch(setLocatedAt(item.tinhThanh));
                     setShowSearchLocation(false);
-                    setShowSearchDateRange(true);
                   }}
-                  className="space-y-1 group cursor-pointer"
+                  className=" cursor-pointer flex flex-col items-center justify-center"
                 >
                   <div>
                     <img
-                      className="w-full h-20 object-cover rounded-lg border-2 group-hover:border-gray-600 duration-300"
+                      className="w-20  h-20 object-cover rounded-lg border-2 group-hover:border-gray-600 duration-300"
                       alt=""
                       src={item.hinhAnh}
                     />
                   </div>
-                  <p>{item.tinhThanh}</p>
+                  <p className="h-12">{item.tinhThanh}</p>
                 </div>
               ))}
             </div>
           </div>
         )}
-        <div className="flex border border-2 border-gray-300 rounded-full">
+        <div className="grid grid-cols-12 smm:grid-cols-1 border-2 border-gray-300 rounded-full">
           <div
+            className="col-span-3  flex-1 px-6 py-3 flex flex-col justify-center items-center cursor-pointer "
             onClick={() => {
               setShowSearchLocation(true);
               setShowSearchDateRange(false);
               setShowSearchGuests(false);
             }}
-            className="flex-1 px-6 py-3 flex justify-start items-center cursor-pointer"
           >
-            <div>
-              <p className="text-sm">Địa điểm</p>
-              <p
-                className={`text-sm ${
-                  !locatedAt ? "text-gray-400" : "font-bold"
-                }`}
-              >
-                {locatedAt ? locatedAt : "Bạn sắp đi đâu?"}
-              </p>
-            </div>
+            <p className="text-sm">Địa điểm</p>
+            <p
+              className={`text-sm ${
+                !locatedAt ? "text-gray-400" : "font-bold"
+              }`}
+            >
+              {locatedAt ? locatedAt : "Bạn sắp đi đâu?"}
+            </p>
+            <div className="smm:border-b md:hidden smm:border-gray-400 smm:w-9/12 py-2"></div>
           </div>
-          <div className="my-3 border-l border-gray-400"></div>
+
+          <div className="col-span-1 smm:hidden flex justify-center">
+            <div className="my-3 border-l border-gray-400"></div>
+          </div>
+
           <div
+            className="col-span-4 flex-1 smm:h-16 p-3 flex flex-col justify-center items-center cursor-pointer relative"
             onClick={() => {
               setShowSearchLocation(false);
               setShowSearchDateRange(true);
               setShowSearchGuests(false);
             }}
-            className="flex-1 p-3 flex justify-center items-center cursor-pointer relative"
           >
             <p>
               {dayjs(dateRange[0]?.startDate).format("DD/MM/YYYY")} –{" "}
               {dayjs(dateRange[0]?.endDate).format("DD/MM/YYYY")}
             </p>
+            <div className="smm:border-b md:hidden smm:border-gray-400 smm:w-9/12 py-2"></div>
+
             {showSearchDateRange && (
-              <div className="absolute top-[70px] left-1/2 transform -translate-x-1/2 bg-white rounded-lg border-2 border-gray-300 overflow-y-auto overscroll-y-auto cursor-auto">
+              <div
+                className="absolute z-10 top-[70px] left-1/2 transform -translate-x-1/2 bg-white rounded-lg border-2 border-gray-300 overflow-y-auto cursor-auto overflow-hidden"
+                style={{ overscrollBehavior: "none" }}
+              >
                 <DateRangePicker
                   onChange={(item) => dispatch(setDateRange([item.selection]))}
                   showSelectionPreview={true}
@@ -118,37 +123,46 @@ const FilterNav = () => {
                   months={2}
                   ranges={dateRange}
                   direction="horizontal"
-                  className="p-6 flex max-h-[calc(100vh-250px)] overflow-auto overscroll-auto"
+                  className="p-6 flex max-h-[calc(100vh-250px)] smm:w-[300px] overflow-auto"
                 />
               </div>
             )}
           </div>
-          <div className="my-3 border-l border-gray-400"></div>
+
+          <div className="col-span-1 flex smm:hidden justify-center">
+            <div className="my-3 border-l border-gray-400"></div>
+          </div>
+
           <div
             onClick={() => {
               setShowSearchLocation(false);
               setShowSearchDateRange(false);
               setShowSearchGuests(true);
             }}
-            className="flex-1 p-3 flex justify-between items-center cursor-pointer relative gap-3"
+            className="col-span-3 flex-1 p-3 flex justify-center items-center cursor-pointer relative gap-3"
           >
             <p>Thêm khách</p>
             <div
-              className="bg-[#FF5A5F] hover:bg-[#9e3e4e] duration-300 text-white rounded-full p-2 flex justify-center items-center"
+              className="bg-main ml-5 hover:bg-[#9e3e4e] duration-300 text-white rounded-full p-2 flex justify-center items-center"
               onClick={() => {
                 if (locatedAt) {
-                  navigate(`/roombycity/${convertToSlug(locatedAt)}`);
-                  setExtendSearchBar(false);
+                  navigate(`/filter/${convertToSlug(locatedAt)}`);
                   setShowSearchGuests(false);
                   setShowSearchLocation(false);
                   setShowSearchDateRange(false);
                 }
+                else{
+                    navigate(`/listroom`);
+                    setShowSearchGuests(false);
+                    setShowSearchLocation(false);
+                    setShowSearchDateRange(false);
+                }
               }}
             >
-              <SearchOutlined className="h-3 w-3" />
+              <SearchOutlined className=" h-3 w-3" />
             </div>
             {showSearchGuests && (
-              <div className="absolute w-[300px] top-[70px] right-0 bg-white rounded-full px-6 py-3 border-2 border-gray-300 overflow-y-auto overscroll-y-auto cursor-auto flex justify-between items-center">
+              <div className="z-10 absolute w-[300px] top-[70px] right-0 bg-white rounded-full px-6 py-3 border-2 border-gray-300 overflow-y-auto overscroll-y-auto cursor-auto flex justify-between items-center">
                 <div className="text-md">Khách</div>
                 <div className="flex justify-between items-center gap-3">
                   <button
