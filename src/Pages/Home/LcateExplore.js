@@ -5,6 +5,7 @@ import { Card } from "antd";
 import Meta from "antd/es/card/Meta";
 import { useDispatch } from "react-redux";
 import { setLoadingOff, setLoadingOn } from "../../Redux/SpinnerSlice";
+import convertToSlug from "../../Utils/convertToSlug";
 const anywherePlaces = [
   {
     name: "Toàn bộ nhà",
@@ -92,7 +93,7 @@ const LcateExplore = () => {
         <div className="container space-y-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {cities.map((i, d) => (
-              <Link key={i} to={`/roombycity/${i.tinhThanh}`}>
+              <Link key={i} to={`/rooms/${convertToSlug(i.tinhThanh)}`}>
                 <Card
                   hoverable
                   className="w-full flex items-center cursor-pointer hover:bg-gray-100 hover:scale-105 transition duration-300 ease-in-out"
@@ -120,9 +121,9 @@ const LcateExplore = () => {
               {anywherePlaces.map((item, index) => {
                 return (
                   <Link
-                    data-aos="fade-in"
+                    data-aos="flip-left"
                     key={index}
-                    to={`/roombycity/${item.link_slug}`}
+                    to={`/rooms/${item.link_slug}`}
                   >
                     <Card
                       hoverable

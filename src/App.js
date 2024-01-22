@@ -9,15 +9,17 @@ import RoomLocate from "./Pages/RoomLocate/RoomLocate";
 import ListRoom from "./Pages/ListRoom/ListRoom";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-
+import AOS from "aos";
+import "aos/dist/aos.css";
 function App() {
+  AOS.init();
   return (
     <>
       <Routes>
         <Route path="/" element={<UserTemplate />}>
           <Route index element={<HomePage />} />
-          <Route path="filterRoom/:cityName" element={<RoomLocate />} />
-          <Route path="listRoom" element={<ListRoom />} />
+          <Route path="rooms/:cityName" element={<RoomLocate />} />
+          <Route path="rooms" element={<ListRoom />} />
         </Route>
       </Routes>
     </>

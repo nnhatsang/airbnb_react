@@ -73,7 +73,7 @@ const FilterNav = () => {
             </div>
           </div>
         )}
-        <div className="grid grid-cols-12 smm:grid-cols-1 border-2 border-gray-300 rounded-full">
+        <div className="grid grid-cols-12 smm:grid-cols-1 border-2 border-gray-300 md:rounded-full">
           <div
             className="col-span-3  flex-1 px-6 py-3 flex flex-col justify-center items-center cursor-pointer "
             onClick={() => {
@@ -146,16 +146,15 @@ const FilterNav = () => {
               className="bg-main ml-5 hover:bg-[#9e3e4e] duration-300 text-white rounded-full p-2 flex justify-center items-center"
               onClick={() => {
                 if (locatedAt) {
-                  navigate(`/filter/${convertToSlug(locatedAt)}`);
+                  navigate(`/rooms/${convertToSlug(locatedAt)}`);
                   setShowSearchGuests(false);
                   setShowSearchLocation(false);
                   setShowSearchDateRange(false);
-                }
-                else{
-                    navigate(`/listroom`);
-                    setShowSearchGuests(false);
-                    setShowSearchLocation(false);
-                    setShowSearchDateRange(false);
+                } else {
+                  navigate(`/rooms`);
+                  setShowSearchGuests(false);
+                  setShowSearchLocation(false);
+                  setShowSearchDateRange(false);
                 }
               }}
             >
