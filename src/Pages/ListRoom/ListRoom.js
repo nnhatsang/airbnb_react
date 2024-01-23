@@ -54,7 +54,7 @@ const ListRoom = () => {
             {dayjs(dateRange[0].startDate).format("DD/MM/YYYY")} –{" "}
             {dayjs(dateRange[0].endDate).format("DD/MM/YYYY")}
           </p>
-          <div className="grid lg:grid-cols-3 2xl:grid-cols-5 md:grid-cols-3 smm:grid-cols-1 gap-10">
+          <div className="grid lg:grid-cols-3 2xl:grid-cols-5 md:grid-cols-3 smm:grid-cols-1 gap-5">
             {listRoom.map((i, d) => (
               <CardList
                 tenPhong={i.tenPhong}
