@@ -3,16 +3,20 @@ import dayjs from "dayjs";
 import React, { useEffect, useRef, useState } from "react";
 import { DateRangePicker } from "react-date-range";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { setDateRange, setLocatedAt, setNumPeop } from "../../Redux/UserSlice";
 import { Vitri } from "../../Services/Vitri";
 import convertToSlug from "../../Utils/convertToSlug";
+import { setLoadingOff, setLoadingOn } from "../../Redux/SpinnerSlice";
 
 const FilterNav = () => {
   const { locatedAt, dateRange, numPeop } = useSelector(
     (state) => state.UserSlice
   );
+  const navigate = useNavigate();
+  // const location = useLocation();
 
+  // console.log(location);
   const [showSearchLocation, setShowSearchLocation] = useState(false);
   const [showSearchDateRange, setShowSearchDateRange] = useState(false);
   const [showSearchGuests, setShowSearchGuests] = useState(false);
@@ -33,24 +37,44 @@ const FilterNav = () => {
   const [cities, setCities] = useState([]);
 
   useEffect(() => {
+    dispatch(setLoadingOn());
     Vitri.get_vitri_phanTrang()
       .then((res) => {
         setCities(res.data.content.data);
+        dispatch(setLoadingOff());
       })
       .catch((err) => {
         console.error(err);
+        dispatch(setLoadingOff());
       });
   }, []);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   return (
     <>
       <div className="container py-10 relative ">
         {showSearchLocation && (
-          <div className="absolute w-[40vh] top-[70px] left-0 z-50 bg-white rounded-lg p-6 border-2 border-gray-300 overflow-y-auto overscroll-y-auto cursor-auto max-h-[calc(800px-250px)]">
+          <div className="absolute w-[1/2]  top-[70px] left-0 z-50 bg-white rounded-lg p-6 border-2 border-gray-300 overflow-y-auto overscroll-y-auto cursor-auto max-h-[calc(800px-250px)]">
             <h1 className="font-bold text-md mb-6">Tìm kiếm địa điểm</h1>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+              <div
+                className="text-center cursor-pointer"
+                onClick={() => {
+                  dispatch(setLocatedAt(""));
+                  setShowSearchLocation(false);
+                }}
+              >
+                {" "}
+                <div className="">
+                  <img
+                    className="w-20  h-20 object-cover rounded-lg border-2 group-hover:border-gray-600 duration-300"
+                    src="https://www.app-premantura.com/wp-content/themes/elemin/themify/img/non-skin.gif"
+                    alt=""
+                  />
+                </div>
+                None
+              </div>
+
               {cities?.map((item, index) => (
                 <div
                   key={index}

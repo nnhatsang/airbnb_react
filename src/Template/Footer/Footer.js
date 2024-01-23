@@ -3,8 +3,8 @@ import { NavLink } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <div className={"border-t mt-5 pt-5 bg-gray-100"}>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 py-6 gap-12 container ">
+    <div className="border-t mt-5 pt-5 bg-gray-100">
+      <div className="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 py-6 gap-12 container ">
         <div className="space-y-3">
           <h2 className="font-bold uppercase">Giới thiệu</h2>
           <ul className="text-sm space-y-3">
@@ -305,7 +305,7 @@ const Footer = () => {
               </svg>
             </span>
             <span className="hover:underline cursor-pointer px-3 font-medium">
-              Tiếng Việt(VN)
+              Tiếng Việt (VN)
             </span>
             <i className="fa fa-dollar-sign font-medium cursor-pointer"></i>
             <span className="hover:underline cursor-pointer px-2 font-medium">

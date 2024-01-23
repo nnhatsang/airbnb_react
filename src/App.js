@@ -11,15 +11,17 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import ScrollToTop from "./Components/ScrollToTop";
 function App() {
   AOS.init();
   return (
     <>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<UserTemplate />}>
           <Route index element={<HomePage />} />
-          <Route path="rooms/:cityName" element={<RoomLocate />} />
           <Route path="rooms" element={<ListRoom />} />
+          <Route path="rooms/:cityName" element={<RoomLocate />} />
         </Route>
       </Routes>
     </>

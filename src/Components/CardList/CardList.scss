@@ -1,9 +1,9 @@
 .swiper-initialized.swiper-horizontal {
-    .swiper-pagination-horizontal{
-        .swiper-pagination-bullet-active{
-            background: rgba(255, 255, 255, 0.723) !important;
-        }
+  .swiper-pagination-horizontal {
+    .swiper-pagination-bullet-active {
+      background: rgba(255, 255, 255, 0.723) !important;
     }
+  }
   .swiper-button-prev {
     color: black !important;
     transition: all 1s;
@@ -31,4 +31,15 @@
       }
     }
   }
+}
+// .swiper-slide {
+//   display: flex !important; /* Đảm bảo các slide hiển thị theo chiều ngang */
+// }
+
+.swiper-image {
+  object-fit: cover;
+  object-position: 0% 50%;
+  width: 500px;
+  height: 300px;
+  border-radius: 15px !important;
 }

@@ -20,6 +20,6 @@ const SpinnerSlice = createSlice({
   },
 });
 
-export const {setLoadingOn,setLoadingOff} = SpinnerSlice.actions;
+export const { setLoadingOn, setLoadingOff } = SpinnerSlice.actions;
 
 export default SpinnerSlice.reducer;

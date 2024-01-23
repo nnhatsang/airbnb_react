@@ -1,9 +1,19 @@
 import React from "react";
 import "./Banner.scss";
-import camping from "./../../Assets/Images/undraw_camping_noc8.svg";
+// import camping from "./../../Assets/Images/undraw_camping_noc8.svg";
 import logo from "./../../Assets/Images/airbnb-1.svg";
+import * as camping from "./../../Assets/Animations/logo_animate.json";
+import Lottie from "react-lottie";
 
 const Banner = () => {
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: camping,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
   return (
     <>
       <div className="">
@@ -11,10 +21,10 @@ const Banner = () => {
           className="w-full relative banner-responsive flex items-center  smm:h-[50vh] md:h-[50vh] lg:h-[50vh] 2xl:h-[80vh]"
           style={{
             background:
-              "url(https://images.unsplash.com/photo-1520769945061-0a448c463865?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80&#39)",
+              "url(https://i0.wp.com/picjumbo.com/wp-content/uploads/man-camping-in-nature-and-watching-stars-free-photo.jpg?w=2210&quality=70)",
             backgroundRepeat: "no-repeat",
             backgroundSize: "cover",
-            backgroundPosition: "80%",
+            backgroundPosition: "bottom",
           }}
         >
           <div className="mask bg-gradient-dark smm:h-[50vh] md:h-[50vh] lg:h-[50vh] 2xl:h-[80vh] "></div>
@@ -29,12 +39,16 @@ const Banner = () => {
                     </h2>
                   </div>
                 </div>
-                <p className="animate__animated animate__fadeInUp animate__delay-1s md:text-xl text-white lg:text-3xl md:text-xl smm:text-lg smm:flex smm:justify-center ">
+                <p className="animate__animated animate__fadeInUp animate__delay-1s  text-white lg:text-3xl md:text-xl smm:text-lg smm:flex smm:justify-center ">
                   Belong anywhere
                 </p>
               </div>
-              <div className="item w-full  flex  justify-center animate__animated animate__fadeInUp animate__delay-3s">
-                <img src={camping} alt="" className="w-[500px] smm:hidden" />
+              <div className="item w-full  flex  justify-center animate__animated animate__fadeInUp animate__delay-2s">
+                <div className="smm:hidden w-[800px]">
+                  <Lottie options={defaultOptions} />
+                </div>
+
+                {/* <img src={camping} alt="" className="w-[500px] smm:hidden" /> */}
               </div>
             </div>
           </div>

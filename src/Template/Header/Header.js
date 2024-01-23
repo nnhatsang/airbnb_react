@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import $ from "jquery"; // Import jQuery
 import "./Header.scss";
 import {
@@ -95,6 +95,8 @@ const Header = () => {
     : " hidden";
   // login
 
+  const location = useLocation();
+  // console.log(location.pathname);
   const {
     handleSubmit,
     handleChange,
@@ -130,23 +132,13 @@ const Header = () => {
               dispatch(setLogin({ ...data }));
               userLocalStorage.set({ ...data });
               toggleModalLogin();
-              navigate("/");
-              // userLocalStorage.set(res.data.content);
-              // dispatch(setLogin(res.data.content));
-              // setTimeout(() => {
-              //   window.location.reload();
-              // }, 1000);
+   
+              setTimeout(() => {
+                navigate(location.pathname);
+              }, 1000);
             })
             .catch((err) => {
-              // message.error("Thất bại");
-              // messageApi.open({
-              //   type: "error",
-              //   content: err.response.data.content,
-              // });
-              //
               message.error(err.response.data.content);
-
-              // console.log(err);
             });
           resetForm();
           break;
@@ -371,7 +363,7 @@ const Header = () => {
                   className={({ isActive, isPending }) => {
                     return isActive
                       ? "text-[#FE6B6E] smm:px-3 smm:py-2 smm:block "
-                      : "";
+                      : "block py-2 px-3  rounded hover:bg-gray-100 hover:text-black md:hover:bg-transparent md:hover:text-blue-700 md:p-0 duration-300";
                   }}
                 >
                   Home
@@ -415,8 +407,6 @@ const Header = () => {
       </nav>
       {/* login */}
       <Modal
-        // title="Đăng nhập"
-        // ah anh
         open={showLogin}
         onCancel={toggleModalLogin}
         footer={null}
@@ -440,6 +430,13 @@ const Header = () => {
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.email}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  // Thực hiện hành động đăng nhập ở đây, có thể gọi hàm handleSubmit
+                  handleSubmit();
+                }
+              }}
             />
             {errors.email && touched.email ? (
               <p className="text-red-500 text-xs mt-1">{errors.email}</p>
@@ -461,30 +458,17 @@ const Header = () => {
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.password}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  // Thực hiện hành động đăng nhập ở đây, có thể gọi hàm handleSubmit
+                  handleSubmit();
+                }
+              }}
             />
             {errors.password && touched.password ? (
               <p className="text-red-500 text-xs mt-1">{errors.password}</p>
             ) : null}
-            {/* <FormItem
-              label={
-                <span className="block  text-sm font-medium text-gray-900">
-                  Password
-                </span>
-              }
-              name="password"
-              validateStatus={
-                errors.password && touched.password ? "error" : ""
-              }
-              help={errors.password && touched.password && errors.password}
-            >
-              <Input.Password
-                name="password"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.password}
-                placeholder="Điền mật khẩu...."
-              />
-            </FormItem> */}
           </div>
           <div className="flex  justify-end">
             <button

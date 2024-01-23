@@ -2,7 +2,6 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 const Loading = () => {
-  const { isLoading } = useSelector((state) => state.SpinnerSlice);
   return (
     <div
       className="fixed inset-0 bg-white   flex items-center justify-center"
