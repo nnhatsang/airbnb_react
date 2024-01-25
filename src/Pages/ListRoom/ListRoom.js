@@ -35,19 +35,11 @@ const ListRoom = () => {
   console.log(listRoom);
   return (
     <>
+    
       <TitlePage title={"Danh sách phòng hiện tại"} />
       <FilterNav />
       <>
-        <div className="flex flex-wrap justify-center gap-3">
-          {filter.map((item, index) => (
-            <button
-              className="rounded-lg  text-md bg-white text-black border border-gray-300 hover:border-gray-900 duration-300 px-6 py-2"
-              key={index}
-            >
-              {item}
-            </button>
-          ))}
-        </div>
+      
         <div className="container mt-5 py-5">
           <p className="mb-5 font-bold">
             Có {listRoom.length ?? 0} chỗ ở tại {locateAt} •{" "}
@@ -55,15 +47,23 @@ const ListRoom = () => {
             {dayjs(dateRange[0].endDate).format("DD/MM/YYYY")}
           </p>
           <div className="grid lg:grid-cols-3 2xl:grid-cols-5 md:grid-cols-3 smm:grid-cols-1 gap-5">
-            {listRoom.map((i, d) => (
-              <CardList
-                tenPhong={i.tenPhong}
-                hinhAnh={i.hinhAnh}
-                giaTien={i.giaTien}
-                moTa={i.moTa}
-                id={i.id}
-              />
-            ))}
+            {listRoom.length > 0 ? (
+              listRoom.map((i, d) => (
+                <CardList
+                  tenPhong={i.tenPhong}
+                  hinhAnh={i.hinhAnh}
+                  giaTien={i.giaTien}
+                  moTa={i.moTa}
+                  id={i.id}
+                />
+              ))
+            ) : (
+              <div className="col-span-5">
+                <h1 className=" text-center text-md">
+                  Hiện tại không thể tìm thấy phòng bạn cần tìm
+                </h1>
+              </div>
+            )}
           </div>
         </div>
       </>

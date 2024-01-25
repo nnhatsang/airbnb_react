@@ -12,6 +12,7 @@ import "react-date-range/dist/theme/default.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import ScrollToTop from "./Components/ScrollToTop";
+import RoomDetail from "./Pages/RoomDetail/RoomDetail";
 function App() {
   AOS.init();
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="rooms" element={<ListRoom />} />
           <Route path="rooms/:cityName" element={<RoomLocate />} />
+          <Route path="room-detail/:roomId" element={<RoomDetail />} />
         </Route>
       </Routes>
     </>

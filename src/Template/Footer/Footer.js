@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 const Footer = () => {
   return (
     <div className="border-t mt-5 pt-5 bg-gray-100">
-      <div className="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 py-6 gap-12 container ">
+      <div className="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 py-6 gap-12 ">
         <div className="space-y-3">
           <h2 className="font-bold uppercase">Giới thiệu</h2>
           <ul className="text-sm space-y-3">
@@ -269,7 +269,7 @@ const Footer = () => {
           </ul>
         </div>
       </div>
-      <div className="bg-gray-50 border-t fixed bottom-0 w-screen z-1  py-3 hidden md:block">
+      <div className="bg-gray-50 border-t fixed bottom-0 w-screen z-1  py-3 hidden md:block z-20">
         <div className="container mx-auto px-10 flex justify-between items-center text-gray-500 ">
           <div>
             <span>© 2022 Airbnb, Inc.</span>

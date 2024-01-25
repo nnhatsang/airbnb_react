@@ -86,6 +86,7 @@ const LcateExplore = () => {
         dispatch(setLoadingOff());
       });
   }, []);
+  // console.log(cities);
 
   return (
     <>

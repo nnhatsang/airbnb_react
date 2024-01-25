@@ -18,17 +18,17 @@ const CardList = ({ hinhAnh, giaTien, tenPhong, moTa, id }) => {
   };
   return (
     <>
-      <Link to={`/detail/${id}`}>
+      <Link to={`/room-detail/${id}`}>
         <Card
           bordered={false}
-          className="cursor-pointer border-none drop-shadow-none shadow-none"
+          className="listAllRoom cursor-pointer border-none drop-shadow-none shadow-none"
           data-aos="zoom-in"
           // style={{
           //   width: "full",
 
           // }}
           cover={
-            <Link to={`/detail/${id}`}>
+            <Link to={`/room-detail/${id}`}>
               <Swiper
                 cssMode={true}
                 navigation={true}
@@ -72,7 +72,6 @@ const CardList = ({ hinhAnh, giaTien, tenPhong, moTa, id }) => {
             </Link>
           }
         >
-          {/* <Link to={""}> */}
           <Meta
             title={
               <div className="flex justify-between">
