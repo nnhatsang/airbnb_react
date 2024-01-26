@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import {
+  Link,
+  NavLink,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import $ from "jquery"; // Import jQuery
 import "./Header.scss";
 import {
@@ -40,7 +46,6 @@ const Header = () => {
   // login
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   // signUp
 
   useEffect(() => {
@@ -96,7 +101,7 @@ const Header = () => {
   // login
 
   const location = useLocation();
-  // console.log(location.pathname);
+  // console.log(location);
   const {
     handleSubmit,
     handleChange,
@@ -132,7 +137,7 @@ const Header = () => {
               dispatch(setLogin({ ...data }));
               userLocalStorage.set({ ...data });
               toggleModalLogin();
-   
+
               setTimeout(() => {
                 navigate(location.pathname);
               }, 1000);
@@ -273,12 +278,20 @@ const Header = () => {
       );
     }
   };
+
+  const { roomId } = useParams();
+  // console.log(roomId);
+
   return (
     <>
       {/* {contextHolder} */}
 
       <nav
-        className={`bg-transparent z-[990] py-5 fixed w-full nav-menu ${additionalClass} duration-500 smm:bg-black   lg:bg-transparent`}
+        className={`bg-transparent z-[990] py-5 fixed w-full nav-menu ${additionalClass} duration-500 smm:bg-black  ${
+          roomId && location.pathname.includes("/room-detail/")
+            ? "md:bg-white md:text-black"
+            : "lg:bg-transparent"
+        } `}
       >
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4 ">
           <NavLink
