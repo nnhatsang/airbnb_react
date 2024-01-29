@@ -7,4 +7,5 @@ export const Phong = {
   get_idPhong: (id) => API.get(`/api/phong-thue/${id}`),
   get_binhLuan: (id) =>
     API.get(`/api/binh-luan/lay-binh-luan-theo-phong/${id}`),
+  post_binhLuan: (data) => API.post("/api/binh-luan", data),
 };

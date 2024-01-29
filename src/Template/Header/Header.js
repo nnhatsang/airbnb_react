@@ -100,6 +100,9 @@ const Header = () => {
     : " hidden";
   // login
 
+  const onImageError = (e) => {
+    e.target.src = "https://cdn-icons-png.flaticon.com/512/6596/6596121.png";
+  };
   const location = useLocation();
   // console.log(location);
   const {
@@ -210,9 +213,9 @@ const Header = () => {
             <span className="sr-only">Open user menu</span>
 
             <img
-              className="w-8 h-8 rounded-full"
-              src="https://cdn-icons-png.flaticon.com/512/6596/6596121.png"
-              alt="user photo"
+              className="w-10 h-10 rounded-full object-cover"
+              src={user.avatar}
+              onError={onImageError}
             />
             <span className=" ml-3 smm:text-white leading-7 ">{user.name}</span>
           </button>
@@ -233,7 +236,7 @@ const Header = () => {
             </div>
             <ul className="py-2" aria-labelledby="user-menu-button">
               <li>
-                <NavLink className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 ">
+                <NavLink to={'/info-user'} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 ">
                   Dashboard
                 </NavLink>
               </li>

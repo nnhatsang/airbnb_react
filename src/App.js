@@ -13,6 +13,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import ScrollToTop from "./Components/ScrollToTop";
 import RoomDetail from "./Pages/RoomDetail/RoomDetail";
+import InfoUser from "./Pages/InfoUser/InfoUser";
 function App() {
   AOS.init();
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/" element={<UserTemplate />}>
           <Route index element={<HomePage />} />
           <Route path="rooms" element={<ListRoom />} />
+          <Route path="info-user" element={<InfoUser />} />
           <Route path="rooms/:cityName" element={<RoomLocate />} />
           <Route path="room-detail/:roomId" element={<RoomDetail />} />
         </Route>

@@ -1,46 +1,134 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Phong } from "../../Services/Phong";
 import { Vitri } from "./../../Services/Vitri";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar } from "@fortawesome/free-regular-svg-icons";
 
-import { Image, message } from "antd";
+import { Image, Modal, Rate, message } from "antd";
 import { Pagination } from "swiper/modules";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 
+import {
+  faAirFreshener,
+  faBacon,
+  faHandsWash,
+  faKitchenSet,
+  faParking,
+  faSwimmingPool,
+  faTv,
+  faWifi,
+} from "@fortawesome/free-solid-svg-icons";
+import Alert from "antd/es/alert/Alert";
+import { addDays } from "date-fns";
+import { Formik, useFormik } from "formik";
+import moment from "moment";
+import { DateRangePicker } from "react-date-range";
+import { useDispatch, useSelector } from "react-redux";
 import "swiper/css";
 import "swiper/css/pagination";
-import { TabTitle } from "../../Utils/SetTitle";
-import TitlePage from "../TitlePage";
-import { capitalizeFirstLetter } from "../../Utils/capitalizeString";
-import { useDispatch, useSelector } from "react-redux";
+import * as Yup from "yup";
+import ListComment from "../../Components/ListComment/ListComment";
 import { setLoadingOff, setLoadingOn } from "../../Redux/SpinnerSlice";
-import ReactHtmlParser from "react-html-parser";
-import Rating from "./../../Components/Rating/Rating";
-import moment from "moment";
 import { setNumPeop } from "../../Redux/UserSlice";
+import { TabTitle } from "../../Utils/SetTitle";
+import Rating from "./../../Components/Rating/Rating";
 
 const RoomDetail = () => {
-  const { dateRange, numPeop } = useSelector((state) => state.UserSlice);
-
-  const [toEnglish, setToEnglish] = useState(false);
-
+  const { dateRange, numPeop, user } = useSelector((state) => state.UserSlice);
+  const [comments, setComments] = useState([]);
   const { roomId } = useParams();
   const [room, setRoom] = useState({});
   const [avgRate, setAvgRate] = useState();
   const dispatch = useDispatch();
-  const [BooCalRoom, setBooCalRoom] = useState(false);
-  const [bookedRangeDates, setBookedRangeDates] = useState(dateRange);
-  // const [numPeo, setNumPeo] = useState(numPeol);
+  const [bookedRangeDates, setBookedRangeDates] = useState([
+    {
+      startDate: addDays(new Date(), 1),
+      endDate: addDays(new Date(), 8),
+      key: "selection",
+    },
+  ]);
+
+  const options = {
+    rangeColors: ["#e0565b"],
+  };
+  const BookCalendar = ({ bookedRangeDates, setBookedRangeDates }) => (
+    <DateRangePicker
+      onChange={(item) => setBookedRangeDates([item.selection])}
+      showSelectionPreview={true}
+      moveRangeOnFirstSelection={false}
+      months={2}
+      ranges={bookedRangeDates}
+      direction="horizontal"
+      className="p-6 flex overflow-auto"
+      {...options}
+    />
+  );
+
+  const [openBookCalendar, setOpenBookCalendar] = useState(false);
+  const [usefulThings, setUsefulThings] = useState([]);
+  useEffect(() => {
+    // Kiểm tra xem user có tồn tại không
+    if (user) {
+      // Cập nhật giá trị của maNguoiBinhLuan và token trong formik
+      setFieldValue("maNguoiBinhLuan", `${user.id}`);
+
+      // setFieldValue("token", `${user.token}`);
+    }
+  }, [user]);
+  const {
+    handleSubmit,
+    handleChange,
+    handleBlur,
+    values,
+    errors,
+    touched,
+    setFieldValue,
+    resetForm,
+  } = useFormik({
+    initialValues: {
+      maPhong: roomId,
+      maNguoiBinhLuan: `${user ? user.id : null}`,
+      ngayBinhLuan: new Date(),
+      noiDung: "",
+      saoBinhLuan: 0,
+      // token: `${user && user.token}`,
+    },
+
+    onSubmit: async (values) => {
+     await Phong.post_binhLuan(
+       values,
+       { resetForm },
+       {
+         headers: { token: user.token },
+       }
+     )
+       .then((res) => {
+         message.success("Bình luận thành công");
+         Phong.get_binhLuan(roomId)
+           .then((res) => setComments(res.data.content.reverse()))
+           .catch((err) => {
+             console.log(err);
+           });
+         resetForm();
+       })
+       .catch((err) =>
+         message.error(
+           err.response.data.content.replace(/^\w/, (c) => c.toUpperCase())
+         )
+       );
+    },
+    validationSchema: Yup.object({
+      noiDung: Yup.string().required("Bạn chưa có nội dung đánh giá"),
+    }),
+  });
 
   useEffect(() => {
     async function fetchData() {
       dispatch(setLoadingOn());
       try {
         const getIdRoom = await Phong.get_idPhong(roomId);
-        const getCommentRoom = await Phong.get_binhLuan(roomId);
+        // const getCommentRoom = await Phong.get_binhLuan(roomId);
         const getCityNation = await Vitri.get_idViTri(
           getIdRoom.data.content.maViTri
         );
@@ -48,58 +136,85 @@ const RoomDetail = () => {
           ...getIdRoom.data.content,
           tinhThanh: getCityNation.data.content.tinhThanh,
           quocGia: getCityNation.data.content.quocGia,
-          listComment: getCommentRoom.data.content.reverse(),
+          // listComment: getCommentRoom.data.content.reverse(),
         };
         console.log(tempData);
         setRoom(tempData);
-        const totalSao = getCommentRoom.data.content.reduce(
-          (sum, item) => sum + item.saoBinhLuan,
-          0
-        );
-        if (getCommentRoom.data.content.length === 0) {
-          setAvgRate("Chưa có đánh giá");
-        } else {
-          const tempNumber = totalSao / getCommentRoom.data.content.length;
-          const formatNumber =
-            tempNumber % 1 === 0
-              ? tempNumber.toFixed(0)
-              : tempNumber.toFixed(2);
-          setAvgRate(formatNumber);
+        // const totalSao = getCommentRoom.data.content.reduce(
+        //   (sum, item) => sum + item.saoBinhLuan
+        // );
+        const updatedUsefulThings = [];
+
+        const addUsefulThing = (name, icon) => {
+          updatedUsefulThings.push({ name, icon });
+        };
+
+        const roomContent = tempData; // Assuming tempData is an object with properties like 'bep', 'wifi', etc.
+
+        if (roomContent.bep) {
+          addUsefulThing("Bếp", faKitchenSet);
         }
+
+        if (roomContent.wifi) {
+          addUsefulThing("Wifi", faWifi);
+        }
+
+        if (roomContent.tivi) {
+          addUsefulThing("Tivi", faTv);
+        }
+
+        if (roomContent.dieuHoa) {
+          addUsefulThing("Điều hòa", faAirFreshener);
+        }
+
+        if (roomContent.doXe) {
+          addUsefulThing("Bãi đỗ xe", faParking);
+        }
+
+        if (roomContent.banUi) {
+          addUsefulThing("Bàn ủi", faBacon);
+        }
+
+        if (roomContent.hoBoi) {
+          addUsefulThing("Hồ bơi", faSwimmingPool);
+        }
+
+        if (roomContent.mayGiat) {
+          addUsefulThing("Máy giặt", faHandsWash);
+        }
+
+        setUsefulThings(updatedUsefulThings);
+
         dispatch(setLoadingOff());
       } catch (error) {
         console.log(error);
       }
     }
     fetchData();
-  }, []);
+  }, [roomId]);
   TabTitle(`${room.tenPhong}`);
-  const fecthDataComment = async () => {
-    try {
-      const CommentRespone = await Phong.get_binhLuan(roomId);
-      const reversedComments = CommentRespone.data.content.reverse();
-      setRoom((prevRoom) => ({
-        ...prevRoom,
-        listComment: reversedComments,
-      }));
 
-      const { RateTotal, CountComment } = reversedComments.reduce(
-        (accumulator, item) => ({
-          RateTotal: accumulator.RateTotal + item.saoBinhLuan,
-          CountComment: accumulator.CountComment + 1,
-        }),
-        { RateTotal: 0, CountComment: 0 }
-      );
-      const trungBinhRating = (RateTotal / CountComment).toFixed(2);
-
-      setAvgRate(trungBinhRating);
-
-      console.log(reversedComments);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  console.log(room.listComment?.length);
+  useEffect(() => {
+    Phong.get_binhLuan(roomId)
+      .then((res) => {
+        setComments(res.data.content.reverse());
+        const totalSao = res.data.content.reduce(
+          (sum, item) => sum + item.saoBinhLuan
+        );
+        if (res.data.content.length === 0) {
+          setAvgRate("Chưa có đánh giá");
+        } else {
+          const tempNumber = totalSao / res.data.content.length;
+          const formatNumber =
+            tempNumber % 1 === 0
+              ? tempNumber.toFixed(0)
+              : tempNumber.toFixed(2);
+          setAvgRate(formatNumber);
+        }
+      })
+      .catch((err) => console.log(err));
+  }, [roomId]);
+  // console.log(usefulThings);
   return (
     <>
       {/* <TitlePage /> */}
@@ -109,20 +224,12 @@ const RoomDetail = () => {
         <div className="grid grid-cols-1 gap-5 items-center justify-start md:flex">
           <div className="grid md:flex gap-x-6 gap-y-3">
             <div className="flex gap-x-5">
-              {/* {room.danhSachBinhLuan.length > 0 && (
-                <ShowRating trungBinhRating={trungBinhRating} binhLuanRef={binhLuanRef} ratingLength={room.danhSachBinhLuan.length} />
-              )}
-              <span className='space-x-2'>
-                <FontAwesomeIcon className='w-4 h-4 text-[#FF5A5F]' icon={faAward} />
-                <span className='text-gray-600'>Chủ nhà siêu cấp</span>
-              </span>
-            </div>
-            <Link
-              className='underline cursor-pointer text-gray-600 hover:text-[#FF5A5F] duration-300'
-              to={`/roombycity/${convertToSlug(room.tinhThanh)}`}
-            >
-              {room.tinhThanh}, {room.quocGia}
-            </Link> */}
+              {/* 
+           dkjbdj
+           sdsf
+           sdfsfs
+
+            */}
             </div>
             <div className="flex justify-between md:block space-x-6"></div>
           </div>
@@ -310,7 +417,12 @@ const RoomDetail = () => {
                 </button>
               </div>
               {/* {room.moTa} */}
-              <p className="text-justify py-3">{ReactHtmlParser(room.moTa)}</p>
+              {/* <p className="text-justify py-3">{ReactHtmlParser(room.moTa)}</p> */}
+              <p
+                className="text-justify py-3"
+                dangerouslySetInnerHTML={{ __html: room.moTa }}
+              ></p>
+
               <span className="font-bold underline cursor-pointer">
                 Hiển thị thêm
               </span>
@@ -325,14 +437,14 @@ const RoomDetail = () => {
                   <span className="font-bold">${room.giaTien}</span>/ night
                 </div>
                 <div className="">
-                  <Rating countComment={room.listComment?.length} />
+                  <Rating countComment={comments?.length} />
                 </div>
               </div>
               <div className="w-full">
                 <div className="flex items-center justify-between">
                   <div
                     className="cursor-pointer grow p-3 bg-white hover:bg-gray-300 duration-300 rounded-tl-lg border-x-2 border-t-2 border-gray-600"
-                    onClick={() => setBooCalRoom(true)}
+                    onClick={() => setOpenBookCalendar(true)}
                   >
                     <div className="font-bold">Nhận phòng</div>
                     <div>
@@ -342,10 +454,7 @@ const RoomDetail = () => {
                     </div>
                   </div>
                   <div className="grow-0"></div>
-                  <div
-                    className="cursor-pointer grow p-3 bg-white hover:bg-gray-300 duration-300 rounded-tr-lg border-t-2 border-r-2 border-gray-600"
-                    onClick={() => setBooCalRoom(true)}
-                  >
+                  <div className="cursor-pointer grow p-3 bg-white hover:bg-gray-300 duration-300 rounded-tr-lg border-t-2 border-r-2 border-gray-600">
                     <div className="font-bold">Trả phòng</div>
                     <div>
                       {moment(bookedRangeDates[0].endDate).format("DD-MM-YYYY")}
@@ -396,7 +505,122 @@ const RoomDetail = () => {
             </div>
           </div>
         </div>
+        <div className="space-y-6">
+          <h3 className="text-xl font-bold">Các tiện ích đi kèm</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {usefulThings.map((item, d) => (
+              <div key={d} className="space-x-3">
+                <span>
+                  <FontAwesomeIcon className="w-5 h-5" icon={item.icon} />
+                </span>
+                <span>{item.name}</span>
+              </div>
+            ))}
+          </div>
+          <button className="w-56 text-black bg-white border-2 border-black rounded-lg p-3 hover:bg-gray-200 duration-300">
+            Ẩn bớt tiện nghi
+          </button>
+        </div>
+        {comments?.length > 0 && <div className="pb-[30px]"></div>}
+        <div className="mb-5 w-full h-px bg-gray-300 "></div>
+        <h3 className="font-bold text-xl">Bình luận</h3>
+        {comments.length > 0 ? (
+          <>
+            <div
+              className={`grid grid-cols-1 lg:grid-cols-2 gap-12 ${
+                comments.length > 4 && "h-[300px]"
+              } overscroll-y-auto overflow-y-auto px-2`}
+            >
+              {comments.map((item, d) => (
+                <ListComment item={item} />
+              ))}
+            </div>
+          </>
+        ) : (
+          <p>Chưa có bình luận</p>
+        )}
+        <div className="mb-5 w-full h-px bg-gray-300 "></div>
+        {user === null ? (
+          <Alert message="Cần đăng nhập để bình luận" type="warning" />
+        ) : (
+          <>
+            <form action="" onSubmit={handleSubmit}>
+              <div>
+                <div className="flex ml-3 items-center">
+                  <div className="mr-3">
+                    <img
+                      className="w-10 h-10 rounded-full"
+                      alt=""
+                      src={
+                        user?.avatar !== ""
+                          ? user?.avatar
+                          : "https://cdn-icons-png.flaticon.com/512/6596/6596121.png"
+                      }
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-bold">{user.name}</h3>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    padding: "0 20px",
+                    marginTop: 15,
+                  }}
+                >
+                  <Rate
+                    value={values.saoBinhLuan}
+                    onBlur={() => handleBlur}
+                    onChange={(value) => {
+                      setFieldValue("saoBinhLuan", value);
+                    }}
+                  />
+                </div>
+                <div className="mt-3 p-3 w-full">
+                  <textarea
+                    id="noiDung"
+                    name="noiDung"
+                    rows={3}
+                    className="border p-2 rounded w-full"
+                    placeholder="Write something..."
+                    value={values.noiDung}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                  {errors.noiDung && touched.noiDung ? (
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.noiDung}
+                    </p>
+                  ) : null}
+                </div>
+                <div className="flex justify-between mx-3">
+                  <div>
+                    <button type="submit" className="px-5 py-2 rounded-lg bg-main text-white duration-200 hover:bg-gray-700">
+                      Đánh giá
+                    </button>
+                  </div>
+                  <div></div>
+                </div>
+              </div>
+            </form>
+          </>
+        )}
       </div>
+      <Modal
+        // title={`${totalNights.toLocaleString(COUNTRY_FORMAT)} đêm`}
+        okType="primary"
+        cancelButtonProps={{ style: { display: "none" } }}
+        okButtonProps={{ style: { display: "none" } }}
+        className="!w-max"
+        open={openBookCalendar}
+        onCancel={() => setOpenBookCalendar(false)}
+        centered
+      >
+        <BookCalendar
+          bookedRangeDates={bookedRangeDates}
+          setBookedRangeDates={setBookedRangeDates}
+        />
+      </Modal>
     </>
   );
 };
