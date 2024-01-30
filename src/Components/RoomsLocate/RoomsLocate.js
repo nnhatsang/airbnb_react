@@ -38,34 +38,40 @@ const RoomsLocate = ({ item, city }) => {
   return (
     <>
       <div className="space-y-6">
-        <div className="w-full rounded-lg mb-5">
+        <div className=" duration-300 mb-5">
           <Link to={`/room-detail/${item.id}`}>
-            <Card hoverable bodyStyle={{ padding: "17px" }} data-aos="zoom-in">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Card
+              style={{ borderRadius: 20 }}
+              hoverable
+              bodyStyle={{ padding: "17px" }}
+              data-aos="zoom-in"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="">
                   <Swiper
-                    cssMode={true}
+                    cssMode={false} // Đặt cssMode thành false
                     navigation={true}
                     pagination={true}
-                    mousewheel={true}
+                    // mousewheel={true}
                     keyboard={true}
                     modules={[Navigation, Pagination, Mousewheel, Keyboard]}
-                    className="roomSwiper relative mx-auto w-[90%] h-48 rounded-lg"
+                    className="roomSwiper relative h-48 rounded-lg"
                   >
                     <button className="absolute top-3 left-3 z-30">
-                      <div className="rounded-full px-3 py-2 bg-white/90  duration-200 ">
+                      <div className="rounded-xl px-3 py-2 bg-white/90 duration-200">
                         Guest favorite
                       </div>
                     </button>
                     {Array.from({ length: 5 }, (_, index) => (
                       <SwiperSlide key={index}>
-                        <div className="w-full h-full cursor-pointer">
-                          <img
-                            className="h-full"
-                            src={item.hinhAnh}
-                            alt=""
-                          />
-                        </div>
+                        {/* <div className="w-full h-full relative"> */}
+                        <img
+                          className="object-cover "
+                          style={{ objectPosition: "10%" }}
+                          src={item.hinhAnh}
+                          alt=""
+                        />
+                        {/* </div> */}
                       </SwiperSlide>
                     ))}
                     <button className="absolute top-3 right-3 z-30">

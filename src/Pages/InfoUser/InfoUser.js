@@ -1,4 +1,12 @@
-import { Button, Card, ConfigProvider, Input, Modal, message } from "antd";
+import {
+  Button,
+  Card,
+  ConfigProvider,
+  Form,
+  Input,
+  Modal,
+  message,
+} from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,6 +20,13 @@ import { setLoadingOff, setLoadingOn } from "../../Redux/SpinnerSlice";
 import { API } from "../../Services/configServ";
 import { setLogin } from "../../Redux/UserSlice";
 import { userLocalStorage } from "../../Utils/Local";
+import {
+  ModalForm,
+  ProForm,
+  ProFormDatePicker,
+  ProFormSelect,
+  ProFormText,
+} from "@ant-design/pro-components";
 
 const InfoUser = () => {
   const [userInfo, setUserInfo] = useState({});
@@ -21,6 +36,7 @@ const InfoUser = () => {
   const nav = useNavigate();
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form] = Form.useForm();
 
   const showModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -40,8 +56,12 @@ const InfoUser = () => {
     }
   };
   useEffect(() => {
-    fetchUser(user.id);
-  }, [user.id]);
+    if (user) {
+      fetchUser();
+    } else {
+      nav("/");
+    }
+  }, []);
 
   // Kiểm tra điều kiện và điều hướng ở đây nếu cần
   const [original, setOriginal] = useState("");
@@ -161,11 +181,8 @@ const InfoUser = () => {
           </p>
           <p className="text-gray-500 text-sm">Bắt đầu tham gia vào {2023}</p>
 
-          <ConfigProvider button={{ className: "bg-blue-500" }}
-        //    locale={viVN}
-           >
-
-            {/* <ModalForm
+          <ConfigProvider button={{ className: "bg-blue-500" }}>
+            <ModalForm
               submitter={{
                 // Configure the button text
                 searchConfig: {
@@ -202,31 +219,32 @@ const InfoUser = () => {
                 onCancel: () => {},
               }}
               submitTimeout={2000}
-              onFinish={async (values) => {
-                const data = {
-                  ...values,
-                  gender: values.gender === "nam",
-                };
-                await waitTime(2000);
-                https
-                  .put(`/users/${id}`, { ...data })
-                  .then(() => {
-                    dispatch(setLogin({ ...user, ...data }));
-                    userLocalStorage.set({ ...user, ...data });
-                    message.success(`Cập nhật thông tin thành công`);
-                    fetchUser(id);
-                  })
-                  .catch((err) => {
-                    message.error(err.response.data);
-                  });
-                return true;
-              }}
+              // onFinish={async (values) => {
+              //   const data = {
+              //     ...values,
+              //     gender: values.gender === "nam",
+              //   };
+              //   await waitTime(2000);
+              //   https
+              //     .put(`/users/${id}`, { ...data })
+              //     .then(() => {
+              //       dispatch(setLogin({ ...user, ...data }));
+              //       userLocalStorage.set({ ...user, ...data });
+              //       message.success(`Cập nhật thông tin thành công`);
+              //       fetchUser(id);
+              //     })
+              //     .catch((err) => {
+              //       message.error(err.response.data);
+              //     });
+              //   return true;
+              // }}
             >
               <ProForm.Group>
                 <ProFormText
                   width="md"
                   name="email"
                   label="Email"
+                  // readonly
                   placeholder="vidu@gmail.com"
                   rules={[
                     {
@@ -308,7 +326,7 @@ const InfoUser = () => {
                   ]}
                 />
               </ProForm.Group>
-            </ModalForm> */}
+            </ModalForm>
           </ConfigProvider>
           <h1 className="font-bold text-2xl">Phòng đã thuê</h1>
           {/* {userBookedPlaces === null ? (

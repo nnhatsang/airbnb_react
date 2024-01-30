@@ -523,23 +523,6 @@ const RoomDetail = () => {
         </div>
         {comments?.length > 0 && <div className="pb-[30px]"></div>}
         <div className="mb-5 w-full h-px bg-gray-300 "></div>
-        <h3 className="font-bold text-xl">Bình luận</h3>
-        {comments.length > 0 ? (
-          <>
-            <div
-              className={`grid grid-cols-1 lg:grid-cols-2 gap-12 ${
-                comments.length > 4 && "h-[300px]"
-              } overscroll-y-auto overflow-y-auto px-2`}
-            >
-              {comments.map((item, d) => (
-                <ListComment item={item} />
-              ))}
-            </div>
-          </>
-        ) : (
-          <p>Chưa có bình luận</p>
-        )}
-        <div className="mb-5 w-full h-px bg-gray-300 "></div>
         {user === null ? (
           <Alert message="Cần đăng nhập để bình luận" type="warning" />
         ) : (
@@ -549,7 +532,7 @@ const RoomDetail = () => {
                 <div className="flex ml-3 items-center">
                   <div className="mr-3">
                     <img
-                      className="w-10 h-10 rounded-full"
+                      className="w-10 h-10 rounded-full object-cover"
                       alt=""
                       src={
                         user?.avatar !== ""
@@ -595,7 +578,10 @@ const RoomDetail = () => {
                 </div>
                 <div className="flex justify-between mx-3">
                   <div>
-                    <button type="submit" className="px-5 py-2 rounded-lg bg-main text-white duration-200 hover:bg-gray-700">
+                    <button
+                      type="submit"
+                      className="px-5 py-2 rounded-lg bg-main text-white duration-200 hover:bg-gray-700"
+                    >
                       Đánh giá
                     </button>
                   </div>
@@ -605,6 +591,24 @@ const RoomDetail = () => {
             </form>
           </>
         )}
+        <div className="mb-5 w-full h-px bg-gray-300 "></div>
+        <h3 className="font-bold text-xl">Bình luận</h3>
+        {comments.length > 0 ? (
+          <>
+            <div
+              className={`grid grid-cols-1 lg:grid-cols-2 gap-12 ${
+                comments.length > 4 && "h-[300px]"
+              } overscroll-y-auto overflow-y-auto px-2`}
+            >
+              {comments.map((item, d) => (
+                <ListComment item={item} />
+              ))}
+            </div>
+          </>
+        ) : (
+          <p>Chưa có bình luận</p>
+        )}
+        {/* <div className="mb-5 w-full h-px bg-gray-300 "></div> */}
       </div>
       <Modal
         // title={`${totalNights.toLocaleString(COUNTRY_FORMAT)} đêm`}

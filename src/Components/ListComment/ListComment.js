@@ -1,3 +1,4 @@
+import { StarFilled } from "@ant-design/icons";
 import { faStar } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
@@ -25,9 +26,21 @@ const ListComment = ({ item }) => {
                 {item.tenNguoiBinhLuan}
               </span>
               <span className="space-x-1">
-                <FontAwesomeIcon className="w-4 h-4 text-main" icon={faStar} />
                 <span className="text-black font-bold">
-                  {item.saoBinhLuan} / 5
+                  {/* {item.saoBinhLuan((i, d) => (
+                    <StarFilled
+                      key={d}
+                      className="text-main"
+                      // style={{ color: value === "filled" ? "gold" : "gray" }}
+                    />
+                  ))} */}
+                  {Array.from({ length: item.saoBinhLuan }, (_, d) => (
+                    <StarFilled
+                      key={d}
+                      className="text-main"
+                      // style={{ color: value === "filled" ? "gold" : "gray" }}
+                    />
+                  ))}
                 </span>
               </span>
             </p>

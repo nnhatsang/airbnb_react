@@ -5,6 +5,7 @@
   "dependencies": {
     "@ant-design/compatible": "^5.1.2",
     "@ant-design/icons": "^5.2.6",
+    "@ant-design/pro-components": "^2.6.48",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-regular-svg-icons": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",

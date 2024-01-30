@@ -203,7 +203,7 @@ const Header = () => {
         <>
           <button
             type="button"
-            className="flex   rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 hover:font-bold duration-300"
+            className="flex items-center  font-bold rounded-full md:me-0 focus:ring-4 px-1 focus:ring-gray-300 hover:underline duration-300"
             id="user-menu-button"
             aria-expanded="false"
             data-dropdown-toggle="user-dropdown"
@@ -217,7 +217,7 @@ const Header = () => {
               src={user.avatar}
               onError={onImageError}
             />
-            <span className=" ml-3 smm:text-white leading-7 ">{user.name}</span>
+            <span className=" ml-3 smm:text-white leading-7 uppercase ">{user.name}</span>
           </button>
 
           <div
