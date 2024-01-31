@@ -1,9 +1,326 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
+import { Admin } from "../../Services/Admin";
+import {
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Pagination,
+  Radio,
+  Select,
+  Table,
+  message,
+} from "antd";
+import moment from "moment";
+import UserActionButton from "../../Components/Admin/Edit/UserActionButton";
 
 const HomeAdmin = () => {
-  return (
-    <div>HomeAdmin</div>
-  )
-}
+  const [form] = Form.useForm();
 
-export default HomeAdmin
+  const [listUser, setListUser] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRow, setTotalRow] = useState();
+  const [showModalCreate, setShowModalCreate] = useState(false);
+
+  const renderUserPage = (index) => {
+    Admin.getUsersPage(index ? index : currentPage)
+      .then((res) => {
+        setListUser(res.data.content.data);
+        // console.log(listUser);
+        setTotalRow(res.data.content.totalRow);
+        setTotalPages(
+          Math.ceil(res.data.content.totalRow / res.data.content.pageSize)
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    renderUserPage(1);
+  }, []);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    renderUserPage(page);
+  };
+
+  const columns = [
+    {
+      title: "Nã ID",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "Username",
+      dataIndex: "name",
+      key: "name",
+      render: (text, record) => (
+        <div className="flex items-center">
+          {record.avatar ? (
+            <img
+              src={record.avatar}
+              alt={text}
+              className="w-10 h-10 rounded-full mr-2"
+            />
+          ) : (
+            <div className="w-10 h-10 bg-gray-300 rounded-full mr-2"></div>
+          )}
+          <p className="font-bold uppercase">{text}</p>
+        </div>
+      ),
+    },
+    {
+      title: "Birthday",
+      dataIndex: "birthday",
+      key: "birthday",
+      render: (text) => {
+        const formattedDate = moment(text, "YYYY-MM-DD").format("DD/MM/YYYY");
+        return moment(text, "YYYY-MM-DD").isValid() ? (
+          <p>{formattedDate}</p>
+        ) : (
+          <p>Invalid Date</p>
+        );
+      },
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      render: (text) => <p className="underline">{text}</p>,
+    },
+    {
+      title: "Người dùng",
+      dataIndex: "role",
+      key: "role",
+      render: (text) => <p className="">{text}</p>,
+    },
+    {
+      title: "Hành động",
+      dataIndex: "actions",
+      key: "actions",
+      render: (text, record) => (
+        <div className="space-x-3">
+          <UserActionButton
+            userID={record.id}
+            renderUserPage={renderUserPage}
+          />
+        </div>
+      ),
+    },
+  ];
+  const onFinish = (values) => {
+    const processValues = {
+      ...values,
+      gender: values.gender === "male" ? true : false,
+    };
+
+    Admin.createNewUser(processValues)
+      .then((result) => {
+        message.success(
+          `Người dùng ${result.data.content.name} đã được thêm thành công.`
+        );
+        setShowModalCreate(false);
+        // load lai du lieu moi
+        Admin.getUsersPage(1)
+          .then((res) => {
+            renderUserPage(1);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const onFinishFailed = (errorInfo) => {
+    console.error("Failed:", errorInfo);
+  };
+  return (
+    <>
+      <div className="flex justify-between items-center mx-auto w-10/12 py-4">
+        <h2 className="font-bold text-2xl  mb-5">Quản lý User</h2>
+        <button
+          className="w-full px-5 py-3 text-white transition-colors duration-150 bg-main border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2"
+          onClick={() => setShowModalCreate(true)}
+        >
+          + Thêm người dùng
+        </button>
+      </div>
+
+      <Table dataSource={listUser} columns={columns} pagination={false} />
+      <div className="py-3"></div>
+      <Pagination
+        current={currentPage}
+        pageSize={totalPages}
+        total={totalRow}
+        onChange={handlePageChange}
+        showSizeChanger={false}
+        showTotal={(total, range) =>
+          `${range[0]}-${range[1]} of ${total} items`
+        }
+      />
+      <Modal
+        open={showModalCreate}
+        onCancel={() => {
+          setShowModalCreate(false);
+        }}
+        footer={null}
+        centered
+        closable={false}
+      >
+        <div className="mt-4 mb-6">
+          <p className="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300">
+            Thêm người dùng
+          </p>
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+            autoComplete="off"
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+              <Form.Item
+                name="name"
+                label="Tên người dùng"
+                tooltip="Họ tên của bạn"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng ghi họ tên!",
+                    whitespace: true,
+                  },
+                  {
+                    pattern: new RegExp(/^[\p{L}\s'-]+$/u),
+                    message: "Họ tên nhập chưa đúng!",
+                  },
+                ]}
+              >
+                <Input placeholder="Điền tên vào đây..." />
+              </Form.Item>
+              <Form.Item
+                label="Email"
+                name="email"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập email!",
+                  },
+                  {
+                    type: "email",
+                    message: "Không đúng định dạng email!",
+                  },
+                ]}
+              >
+                <Input placeholder="example@gmail.com" />
+              </Form.Item>
+              <Form.Item
+                name="phone"
+                label="Số điện thoại"
+                rules={[
+                  {
+                    pattern: new RegExp(/^0(?!0)\d{9}$/g),
+                    message: "Không đúng định dạng số điện thoại!",
+                  },
+                  {
+                    required: true,
+                    message: "Vui lòng nhập số điện thoại!",
+                  },
+                ]}
+              >
+                <Input placeholder="0903 123 123" />
+              </Form.Item>
+              <Form.Item
+                label="Mật khẩu"
+                name="password"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập mật khẩu!",
+                  },
+                  {
+                    min: 6,
+                    message: "Mật khẩu phải có tối thiểu 6 kí tự!",
+                  },
+                ]}
+              >
+                <Input.Password placeholder="********" />
+              </Form.Item>
+              <Form.Item
+                name="gender"
+                label="Giới tính"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn giới tính!",
+                  },
+                ]}
+              >
+                <Select placeholder="Chọn giới tính">
+                  <Select.Option value="male">Nam</Select.Option>
+                  <Select.Option value="female">Nữ</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name="birthday"
+                label="Ngày sinh"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn ngày sinh!",
+                  },
+                ]}
+              >
+                <DatePicker
+                  className="w-full"
+                  placeholder="Chọn ngày sinh"
+                  format="DD-MM-YYYY"
+                />
+              </Form.Item>
+              <Form.Item
+                name="role"
+                label="Chức vụ"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn chức vụ!",
+                  },
+                ]}
+              >
+                <Radio.Group>
+                  <Radio name="role" value="ADMIN">
+                    Admin
+                  </Radio>
+                  <Radio name="role" value="USER">
+                    User
+                  </Radio>
+                </Radio.Group>
+              </Form.Item>
+            </div>
+            <div className="flex gap-5 items-center justify-end">
+              {" "}
+              <button
+                onClick={() => setShowModalCreate(false)}
+                className="w-full px-5 py-3 transition-colors duration-150 bg-white text-black border border-black-200 rounded-lg sm:w-auto sm:px-4 sm:py-2"
+              >
+                Huỷ
+              </button>
+              <button
+                className="w-full px-5 py-3 text-white transition-colors duration-150 bg-main border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 "
+                // onClick={deleteUser}
+              >
+                Thêm người dùng
+              </button>
+            </div>
+          </Form>
+        </div>
+      </Modal>
+    </>
+  );
+};
+
+export default HomeAdmin;
