@@ -217,7 +217,9 @@ const Header = () => {
               src={user.avatar}
               onError={onImageError}
             />
-            <span className=" ml-3 smm:text-white leading-7 uppercase ">{user.name}</span>
+            <span className=" ml-3 smm:text-white leading-7 uppercase ">
+              {user.name}
+            </span>
           </button>
 
           <div
@@ -236,10 +238,24 @@ const Header = () => {
             </div>
             <ul className="py-2" aria-labelledby="user-menu-button">
               <li>
-                <NavLink to={'/info-user'} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 ">
+                <NavLink
+                  to={"/info-user"}
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 "
+                >
                   Dashboard
                 </NavLink>
               </li>
+              {user.role === "ADMIN" && (
+                <li>
+                  <NavLink
+                    to={"/admin"}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 underline"
+                  >
+                    To page Admin
+                  </NavLink>
+                </li>
+              )}
+
               <li>
                 <NavLink className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                   Settings
@@ -387,7 +403,7 @@ const Header = () => {
               </li>
               <li>
                 <NavLink
-                  to={"/about"}
+                  // to={"/about"}
                   className="block py-2 px-3  rounded hover:bg-gray-100 hover:text-black md:hover:bg-transparent md:hover:text-blue-700 md:p-0 duration-300"
                 >
                   About
@@ -395,7 +411,7 @@ const Header = () => {
               </li>
               <li>
                 <NavLink
-                  to={"/listroom"}
+                  // to={"/listroom"}
                   className="block py-2 px-3 rounded hover:bg-gray-100 hover:text-black md:hover:bg-transparent md:hover:text-blue-700 md:p-0 duration-300"
                 >
                   Services
@@ -512,9 +528,6 @@ const Header = () => {
         footer={null}
         centered
       >
-        {/* khúc này là sao nữa ak?????
-        này là dk á
-        */}
         <ConfigProvider locale={viVN}>
           <Form layout="vertical" className="space-y-5" onFinish={handleSubmit}>
             <h2 className="font-bold lg:text-3xl smm:text-xl text-center mb-5">

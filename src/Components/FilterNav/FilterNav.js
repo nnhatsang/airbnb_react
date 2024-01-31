@@ -56,6 +56,10 @@ const FilterNav = () => {
     "Phòng và phòng ngủ",
     "Bộ lọc khác",
   ];
+  const options = {
+    rangeColors: ["#e0565b"],
+    minDate: new Date(),
+  };
   return (
     <>
       <div className="container py-10 relative ">
@@ -154,6 +158,7 @@ const FilterNav = () => {
                   ranges={dateRange}
                   direction="horizontal"
                   className="p-6 flex max-h-[calc(100vh-250px)] smm:w-[300px] overflow-auto"
+                  {...options}
                 />
               </div>
             )}

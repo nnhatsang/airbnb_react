@@ -19,7 +19,7 @@ body {
 /* ===== Scrollbar CSS ===== */
 @layer utilities {
   ::-webkit-scrollbar {
-    width: 6px;
+    width: 6px !important;
   }
 
   ::-webkit-scrollbar-track {

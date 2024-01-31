@@ -14,6 +14,10 @@ import "aos/dist/aos.css";
 import ScrollToTop from "./Components/ScrollToTop";
 import RoomDetail from "./Pages/RoomDetail/RoomDetail";
 import InfoUser from "./Pages/InfoUser/InfoUser";
+import AdminTemplate from "./Template/AdminTemplate";
+import HomeAdmin from "./Pages/Admin/HomeAdmin";
+import PageNotFound from "./Pages/PageNotFound";
+
 function App() {
   AOS.init();
   return (
@@ -27,6 +31,10 @@ function App() {
           <Route path="rooms/:cityName" element={<RoomLocate />} />
           <Route path="room-detail/:roomId" element={<RoomDetail />} />
         </Route>
+        <Route path="/admin" element={<AdminTemplate />}>
+          <Route index element={<HomeAdmin />} />
+        </Route>
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </>
   );

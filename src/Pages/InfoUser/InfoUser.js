@@ -5,12 +5,15 @@ import {
   Form,
   Input,
   Modal,
+  Skeleton,
   message,
 } from "antd";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Auth } from "../../Services/Auth";
+import { Phong } from "../../Services/Phong";
+import { Vitri } from "../../Services/Vitri";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import TitlePage from "../TitlePage";
@@ -27,6 +30,7 @@ import {
   ProFormSelect,
   ProFormText,
 } from "@ant-design/pro-components";
+import RoomsLocate from "../../Components/RoomsLocate/RoomsLocate";
 
 const InfoUser = () => {
   const [userInfo, setUserInfo] = useState({});
@@ -36,6 +40,7 @@ const InfoUser = () => {
   const nav = useNavigate();
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userBookedPlaces, setUserBookedPlaces] = useState(null);
   const [form] = Form.useForm();
 
   const showModal = () => {
@@ -55,9 +60,51 @@ const InfoUser = () => {
       nav("/");
     }
   };
+  const getUserBookedPlaces = async (id) => {
+    try {
+      const userBookedPlacesResponse = await Auth.get_booked_byUser(user.id);
+      const promises = userBookedPlacesResponse.data.content.map(
+        async (item) => {
+          const { ngayDen, ngayDi, soLuongKhach } = item;
+
+          try {
+            const roomResponse = await Phong.get_idPhong(item.maPhong);
+            const room = roomResponse.data.content;
+
+            try {
+              const locationResponse = await Vitri.get_idViTri(room.maViTri);
+              const location = locationResponse.data.content;
+
+              return {
+                ...room,
+                tinhThanh: location.tinhThanh,
+                ngayDen,
+                ngayDi,
+                soLuongKhach,
+              };
+            } catch (locationError) {
+              console.error(locationError);
+              return null;
+            }
+          } catch (roomError) {
+            console.error(`Error fetching room: ${roomError.message}`);
+            return null;
+          }
+        }
+      );
+
+      const transformedData = await Promise.all(promises);
+      const userBookedPlaces = transformedData.filter((data) => data !== null);
+
+      setUserBookedPlaces(userBookedPlaces);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   useEffect(() => {
     if (user) {
       fetchUser();
+      getUserBookedPlaces(user.id);
     } else {
       nav("/");
     }
@@ -91,7 +138,7 @@ const InfoUser = () => {
   return (
     <>
       <div className="uppercase">
-        <TitlePage title={`Thông tin tài khoản người dùng ${userInfo.name}`} />
+        <TitlePage title={`Thông tin người dùng ${userInfo.name}`} />
       </div>
       <div className="container grid lg:flex gap-10 py-5">
         <Card className="basis-auto h-[500px] block lg:sticky top-0 lg:top-20">
@@ -329,7 +376,7 @@ const InfoUser = () => {
             </ModalForm>
           </ConfigProvider>
           <h1 className="font-bold text-2xl">Phòng đã thuê</h1>
-          {/* {userBookedPlaces === null ? (
+          {userBookedPlaces === null ? (
             <div className="space-y-3">
               <LoadingUserPlaces />
               <div className="hidden lg:block">
@@ -341,14 +388,10 @@ const InfoUser = () => {
           ) : (
             <div className="space-y-6">
               {userBookedPlaces.map((item, index) => (
-                <ListRooms
-                  key={index}
-                  item={item}
-                  cityNoSlug={item.tinhThanh}
-                />
+                <RoomsLocate item={item} city={item.tinhThanh} />
               ))}
             </div>
-          )} */}
+          )}
         </div>
       </div>
     </>
@@ -356,3 +399,18 @@ const InfoUser = () => {
 };
 
 export default InfoUser;
+
+const LoadingUserPlaces = () => (
+  <div className="flex grid-cols-2 h-[210px] gap-3">
+    <div className="basis-5/12">
+      <Skeleton className="w-full h-full rounded-lg" />
+    </div>
+    <div className="basis-7/12 space-y-3">
+      {Array.from({ length: 3 }).map((_, indexChild) => (
+        <div key={indexChild}>
+          <Skeleton height={30} className="w-full rounded-lg" />
+        </div>
+      ))}
+    </div>
+  </div>
+);
