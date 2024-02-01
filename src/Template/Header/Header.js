@@ -74,7 +74,7 @@ const Header = () => {
   };
   const toggleUserMenu = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
-    console.log(isUserMenuOpen);
+    // console.log(isUserMenuOpen);
   };
   const toggleLogin = () => {
     setIsMenuLogin(!isMenuLogin);
@@ -269,7 +269,7 @@ const Header = () => {
               <li>
                 <button
                   onClick={() => {
-                    localStorage.removeItem("user");
+                    userLocalStorage.remove();
                     message.success("Đăng xuất thành công!");
                     setTimeout(() => {
                       window.location.reload();

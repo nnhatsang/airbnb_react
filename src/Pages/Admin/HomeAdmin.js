@@ -13,8 +13,11 @@ import {
 } from "antd";
 import moment from "moment";
 import UserActionButton from "../../Components/Admin/Edit/UserActionButton";
+import { useDispatch } from "react-redux";
+import { setLoadingOff, setLoadingOn } from "../../Redux/SpinnerSlice";
 
 const HomeAdmin = () => {
+  const dispatch = useDispatch();
   const [form] = Form.useForm();
 
   const [listUser, setListUser] = useState([]);
@@ -24,6 +27,7 @@ const HomeAdmin = () => {
   const [showModalCreate, setShowModalCreate] = useState(false);
 
   const renderUserPage = (index) => {
+    dispatch(setLoadingOn());
     Admin.getUsersPage(index ? index : currentPage)
       .then((res) => {
         setListUser(res.data.content.data);
@@ -32,6 +36,7 @@ const HomeAdmin = () => {
         setTotalPages(
           Math.ceil(res.data.content.totalRow / res.data.content.pageSize)
         );
+        dispatch(setLoadingOff());
       })
       .catch((err) => {
         console.log(err);
@@ -59,15 +64,16 @@ const HomeAdmin = () => {
       key: "name",
       render: (text, record) => (
         <div className="flex items-center">
-          {record.avatar ? (
-            <img
-              src={record.avatar}
-              alt={text}
-              className="w-10 h-10 rounded-full mr-2"
-            />
-          ) : (
-            <div className="w-10 h-10 bg-gray-300 rounded-full mr-2"></div>
-          )}
+          <img
+            src={
+              record.avatar !== ""
+                ? record.avatar
+                : "https://cdn-icons-png.flaticon.com/512/6596/6596121.png"
+            }
+            alt={text}
+            className="w-10 h-10 rounded-full mr-2"
+          />
+
           <p className="font-bold uppercase">{text}</p>
         </div>
       ),
@@ -95,7 +101,16 @@ const HomeAdmin = () => {
       title: "Người dùng",
       dataIndex: "role",
       key: "role",
-      render: (text) => <p className="">{text}</p>,
+      render: (text) => (
+        <p
+          className="font-bold "
+          style={{
+            color: text === "USER" ? "green" : "red",
+          }}
+        >
+          {text}
+        </p>
+      ),
     },
     {
       title: "Hành động",
@@ -144,15 +159,13 @@ const HomeAdmin = () => {
       <div className="flex justify-between items-center mx-auto w-10/12 py-4">
         <h2 className="font-bold text-2xl  mb-5">Quản lý User</h2>
         <button
-          className="w-full px-5 py-3 text-white transition-colors duration-150 bg-main border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2"
+          className=" px-5 py-3 text-white transition-colors duration-150 bg-main border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2"
           onClick={() => setShowModalCreate(true)}
         >
           + Thêm người dùng
         </button>
       </div>
-
       <Table dataSource={listUser} columns={columns} pagination={false} />
-      <div className="py-3"></div>
       <Pagination
         current={currentPage}
         pageSize={totalPages}
@@ -162,7 +175,8 @@ const HomeAdmin = () => {
         showTotal={(total, range) =>
           `${range[0]}-${range[1]} of ${total} items`
         }
-      />
+      />{" "}
+      <div className="py-3 pb-10"></div>
       <Modal
         open={showModalCreate}
         onCancel={() => {
