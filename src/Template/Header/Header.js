@@ -299,12 +299,9 @@ const Header = () => {
   };
 
   const { roomId } = useParams();
-  // console.log(roomId);
 
   return (
     <>
-      {/* {contextHolder} */}
-
       <nav
         className={`bg-transparent z-[990] py-5 fixed w-full nav-menu ${additionalClass} duration-500 smm:bg-black  ${
           roomId && location.pathname.includes("/room-detail/")

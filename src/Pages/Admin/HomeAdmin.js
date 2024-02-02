@@ -25,13 +25,18 @@ const HomeAdmin = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalRow, setTotalRow] = useState();
   const [showModalCreate, setShowModalCreate] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const handleSearchInputChange = (e) => {
+    setSearchKeyword(e.target.value);
+    // Gọi API với từ khóa tìm kiếm
+    renderUserPage(1, e.target.value);
+  };
 
-  const renderUserPage = (index) => {
+  const renderUserPage = (index, searchKeyword = " ") => {
     dispatch(setLoadingOn());
-    Admin.getUsersPage(index ? index : currentPage)
+    Admin.getUsersPage(index, searchKeyword)
       .then((res) => {
         setListUser(res.data.content.data);
-        // console.log(listUser);
         setTotalRow(res.data.content.totalRow);
         setTotalPages(
           Math.ceil(res.data.content.totalRow / res.data.content.pageSize)
@@ -156,8 +161,9 @@ const HomeAdmin = () => {
   };
   return (
     <>
-      <div className="flex justify-between items-center mx-auto w-10/12 py-4">
+      <div className="flex justify-between items-center mx-auto w-10/12 py-4 gap-10">
         <h2 className="font-bold text-2xl  mb-5">Quản lý User</h2>
+
         <button
           className=" px-5 py-3 text-white transition-colors duration-150 bg-main border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2"
           onClick={() => setShowModalCreate(true)}
@@ -165,7 +171,16 @@ const HomeAdmin = () => {
           + Thêm người dùng
         </button>
       </div>
+      <div className="">
+        <Input
+          className="p-2 mb-5"
+          placeholder="Nhập từ khóa tìm kiếm..."
+          onChange={handleSearchInputChange}
+          value={searchKeyword}
+        />
+      </div>
       <Table dataSource={listUser} columns={columns} pagination={false} />
+      <div className="mb-5"></div>
       <Pagination
         current={currentPage}
         pageSize={totalPages}
