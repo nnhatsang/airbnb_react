@@ -152,14 +152,17 @@ const Header = () => {
           break;
         }
         case "signup": {
-          console.log(mode);
+          // console.log(mode);
           Auth.post_signup(values)
             .then((res) => {
               console.log(res);
               message.success("Đăng ký thành công");
               toggleModalLogin();
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+              // console.log(err.response.data.content);
+              message.error(err.response.data.content);
+            });
           resetForm();
           break;
         }
