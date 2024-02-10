@@ -8,7 +8,13 @@ import { Button, Layout, Menu, message } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Content, Header } from "antd/es/layout/layout";
 import React, { useState } from "react";
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import {
+  Link,
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
 import {
   faLocationCrosshairs,
@@ -33,6 +39,8 @@ const AdminTemplate = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
     // console.log(isUserMenuOpen);
   };
+  const location = useLocation();
+
   return (
     <>
       {isLoading ? <Loading /> : null}
@@ -50,7 +58,8 @@ const AdminTemplate = () => {
             <Menu
               theme="light"
               mode="inline"
-              defaultSelectedKeys={["/admin"]}
+              defaultSelectedKeys={[location.pathname]}
+              // defaultSelectedKeys={["/admin"]}
               className="space-y-5"
               style={{ background: "#FE6B6E" }} // Thiết lập màu nền cho Sider
             >

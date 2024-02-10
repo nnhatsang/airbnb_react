@@ -2,6 +2,7 @@ import {
   Button,
   Card,
   ConfigProvider,
+  DatePicker,
   Form,
   Input,
   Modal,
@@ -31,6 +32,15 @@ import {
   ProFormText,
 } from "@ant-design/pro-components";
 import RoomsLocate from "../../Components/RoomsLocate/RoomsLocate";
+import viVN from "antd/lib/locale/vi_VN"; // Import ngôn ngữ tiếng Việt
+import moment from "moment";
+const waitTime = (time = 100) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, time);
+  });
+};
 
 const InfoUser = () => {
   const [userInfo, setUserInfo] = useState({});
@@ -211,9 +221,9 @@ const InfoUser = () => {
             </p>
             <Button>Nhận huy hiệu</Button>
             <div className="w-full h-px bg-gray-300"></div>
-            {/* <p className="text-xl font-bold">
-              {capitalizeString(userInfo.name)} đã xác nhận
-            </p> */}
+            <p className="text-xl font-bold uppercase">
+              {userInfo.name} đã xác nhận
+            </p>
             <p className="space-x-3">
               <span>
                 <FontAwesomeIcon icon={faCheck} />
@@ -228,7 +238,7 @@ const InfoUser = () => {
           </p>
           <p className="text-gray-500 text-sm">Bắt đầu tham gia vào {2023}</p>
 
-          <ConfigProvider button={{ className: "bg-blue-500" }}>
+          <ConfigProvider locale={viVN} button={{ className: "bg-blue-500" }}>
             <ModalForm
               submitter={{
                 // Configure the button text
@@ -266,25 +276,30 @@ const InfoUser = () => {
                 onCancel: () => {},
               }}
               submitTimeout={2000}
-              // onFinish={async (values) => {
-              //   const data = {
-              //     ...values,
-              //     gender: values.gender === "nam",
-              //   };
-              //   await waitTime(2000);
-              //   https
-              //     .put(`/users/${id}`, { ...data })
-              //     .then(() => {
-              //       dispatch(setLogin({ ...user, ...data }));
-              //       userLocalStorage.set({ ...user, ...data });
-              //       message.success(`Cập nhật thông tin thành công`);
-              //       fetchUser(id);
-              //     })
-              //     .catch((err) => {
-              //       message.error(err.response.data);
-              //     });
-              //   return true;
-              // }}
+              onFinish={async (values) => {
+                // const birthdayValue =
+                //   typeof values.birthday === "Invalid Date" &&
+                //   moment(values.birthday, "DD-MM-YYYY", true).isValid()
+                //     ? values.birthday
+                //     : moment().format("DD-MM-YYYY");
+                const data = {
+                  ...values,
+                  gender: values.gender === "nam",
+                  // birthday: birthdayValue,
+                };
+                await waitTime(2000);
+                API.put(`/api/users/${user.id}`, { ...data })
+                  .then(() => {
+                    dispatch(setLogin({ ...user, ...data }));
+                    userLocalStorage.set({ ...user, ...data });
+                    message.success(`Cập nhật thông tin thành công`);
+                    fetchUser(user.id);
+                  })
+                  .catch((err) => {
+                    message.error(err.response.data);
+                  });
+                return true;
+              }}
             >
               <ProForm.Group>
                 <ProFormText
@@ -340,8 +355,8 @@ const InfoUser = () => {
                 <ProFormDatePicker
                   width="md"
                   name="birthday"
-                  format="DD-MM-YYYY"
                   label="Ngày sinh"
+                  format="DD-MM-YYYY"
                   placeholder="Chọn ngày sinh"
                   rules={[
                     {

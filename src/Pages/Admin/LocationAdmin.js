@@ -2,24 +2,31 @@ import React, { useEffect, useState } from "react";
 import { Admin } from "../../Services/Admin";
 import { useDispatch } from "react-redux";
 import { setLoadingOff, setLoadingOn } from "../../Redux/SpinnerSlice";
-import { Table } from "antd";
+import { Input, Pagination, Table } from "antd";
+import LocationActionButton from "../../Components/Admin/Edit/LocationActionButton";
 
 const LocationAdmin = () => {
   const [listLocation, setListLocation] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [totalPages, setTotalPages] = useState(1);
   const [totalRow, setTotalRow] = useState();
   const dispatch = useDispatch();
+  const handleSearchInputChange = (e) => {
+    setSearchKeyword(e.target.value);
+    // Gọi API với từ khóa tìm kiếm
+    renderLocationPage(1, e.target.value);
+  };
   const renderLocationPage = (index, searchKeyword = " ") => {
     dispatch(setLoadingOn());
     Admin.getLocationPage(index, searchKeyword)
       .then((res) => {
         setListLocation(res.data.content.data);
-        console.log(res.data.content.data);
         setTotalRow(res.data.content.totalRow);
         setTotalPages(
           Math.ceil(res.data.content.totalRow / res.data.content.pageSize)
         );
+
         dispatch(setLoadingOff());
       })
       .catch((err) => {
@@ -29,6 +36,10 @@ const LocationAdmin = () => {
   useEffect(() => {
     renderLocationPage(1);
   }, []);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    renderLocationPage(page);
+  };
   const columns = [
     {
       title: "Nã ID",
@@ -65,14 +76,15 @@ const LocationAdmin = () => {
       key: "actions",
       render: (text, record) => (
         <div className="space-x-3">
-          {/* <UserActionButton
-             userID={record.id}
-             renderUserPage={renderUserPage}
-           /> */}
+          <LocationActionButton
+            locatID={record.id}
+            renderLocaPage={renderLocationPage}
+          />
         </div>
       ),
     },
   ];
+
   return (
     <>
       <div className="flex justify-between items-center mx-auto w-10/12 py-4">
@@ -84,7 +96,25 @@ const LocationAdmin = () => {
           + Thêm vị trí mới
         </button>
       </div>
+      <div className="">
+        <Input
+          className="p-2 mb-5"
+          placeholder="Nhập từ khóa tìm kiếm..."
+          onChange={handleSearchInputChange}
+          value={searchKeyword}
+        />
+      </div>
       <Table dataSource={listLocation} columns={columns} pagination={false} />
+      <Pagination
+        current={currentPage}
+        pageSize={10}
+        total={totalRow}
+        onChange={handlePageChange}
+        showSizeChanger={false}
+        showTotal={(total, range) =>
+          `${range[0]}-${range[1]} of ${total} items`
+        }
+      />{" "}
     </>
   );
 };

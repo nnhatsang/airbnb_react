@@ -183,7 +183,7 @@ const HomeAdmin = () => {
       <div className="mb-5"></div>
       <Pagination
         current={currentPage}
-        pageSize={totalPages}
+        pageSize={10}
         total={totalRow}
         onChange={handlePageChange}
         showSizeChanger={false}
@@ -340,7 +340,6 @@ const HomeAdmin = () => {
               </button>
               <button
                 className="w-full px-5 py-3 text-white transition-colors duration-150 bg-main border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 "
-                // onClick={deleteUser}
               >
                 Thêm người dùng
               </button>

@@ -29,15 +29,15 @@ export const Admin = {
   //location
   getLocationPage: (index, searchKeyword) =>
     API.get(
-      `/api/vi-tri/phan-trang-tim-kiem?pageIndex=${index}&pageSize=100&keyword=${searchKeyword}`
+      `/api/vi-tri/phan-trang-tim-kiem?pageIndex=${index}&pageSize=10&keyword=${searchKeyword}`
     ),
-  getLocationByID: (id) => API.get(`/vi-tri/${id}`),
-  createLocation: (data) => API.post("/vi-tri", data),
-  updateLocation: (data) => API.put(`/vi-tri/${data.id}`, data),
+  getLocationByID: (id) => API.get(`/api/vi-tri/${id}`),
+  createLocation: (data) => API.post("/api/vi-tri", data),
+  updateLocation: (data) => API.put(`/api/vi-tri/${data.id}`, data),
 
-  deleteLocation: (id) => API.delete(`/vi-tri/${id}`),
+  deleteLocation: (id) => API.delete(`/api/vi-tri/${id}`),
   uploadPhotoLocation: (id, photo) =>
-    API.post(`/vi-tri/upload-hinh-vitri?maViTri=${id}`, photo),
+    API.post(`/api/vi-tri/upload-hinh-vitri?maViTri=${id}`, photo),
 
   // booking
   getAllBookings: () => API.get("/dat-phong"),
