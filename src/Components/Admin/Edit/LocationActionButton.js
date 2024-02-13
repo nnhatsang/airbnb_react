@@ -1,9 +1,11 @@
 import { Form, Input, Modal, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { Admin } from "../../../Services/Admin";
+import { useDispatch } from "react-redux";
+import { setLoadingOff } from "../../../Redux/SpinnerSlice";
 
 const LocationActionButton = ({ locatID, renderLocaPage }) => {
-  console.log(locatID);
+  // console.log(locatID);
   const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [form] = Form.useForm();
@@ -34,6 +36,7 @@ const LocationActionButton = ({ locatID, renderLocaPage }) => {
         message.info(response.data.message);
         closeModal();
         renderLocaPage();
+        dispatch(setLoadingOff());
       })
       .catch((error) => {
         console.log(error);
@@ -52,6 +55,7 @@ const LocationActionButton = ({ locatID, renderLocaPage }) => {
   const onFinishFailed = (errorInfo) => {
     console.error("Failed:", errorInfo);
   };
+  const dispatch = useDispatch();
   const onFinish = (value) => {
     if (isChange) {
       // upload hinh
@@ -71,6 +75,8 @@ const LocationActionButton = ({ locatID, renderLocaPage }) => {
               message.success(result.data.message);
               setIsChange(false);
               closeUpdateForm();
+              renderLocaPage();
+              dispatch(setLoadingOff());
             })
             .catch((error) => {
               console.log(error);
@@ -94,7 +100,7 @@ const LocationActionButton = ({ locatID, renderLocaPage }) => {
     <>
       <div className="flex">
         <button
-          className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-primary rounded-lg dark:text-primary-dark focus:outline-none focus:shadow-outline-gray"
+          className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-primary rounded-lg focus:outline-none focus:shadow-outline-gray"
           aria-label="Actions"
           onClick={() => setShowUpdateForm(!showUpdateForm)}
         >
@@ -108,7 +114,7 @@ const LocationActionButton = ({ locatID, renderLocaPage }) => {
           </svg>
         </button>
         <button
-          className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-primary rounded-lg dark:text-primary-dark focus:outline-none focus:shadow-outline-gray"
+          className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-primary rounded-lg focus:outline-none focus:shadow-outline-gray"
           aria-label="Delete"
           onClick={() => setShowConfirmModal(!showConfirmModal)}
         >
@@ -169,146 +175,116 @@ const LocationActionButton = ({ locatID, renderLocaPage }) => {
         onCancel={closeUpdateForm}
         centered
         footer={null}
-        closable={false}
+        // closable={false}
       >
-        <div
-          className="w-full px-6 py-4 overflow-scroll max-h-[70vh] bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-xl"
-          role="dialog"
-          id="modal"
-        >
-          <header className="flex justify-end">
-            <button
-              className="inline-flex items-center justify-center w-6 h-6 text-gray-400 transition-colors duration-150 rounded dark:hover:text-gray-200 hover: hover:text-gray-700"
-              aria-label="close"
-              onClick={closeUpdateForm}
-            >
-              <svg
-                className="w-4 h-4"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                role="img"
-                aria-hidden="true"
+        <div className="py-5">
+          <p className="mb-2 text-lg text-center font-bold ">Cập nhật vị trí</p>
+          <div className="space-y-5">
+            <img
+              src={location?.hinhAnh}
+              className="h-[200px] w-full object-cover rounded-[3px]"
+              alt="hinh anh phong thue"
+              id="showHinhVitriUpdate"
+            />
+
+            <div className=" space-y-5">
+              <label
+                htmlFor="hinhVitriUpdate"
+                className=" bg-gray-300 px-5 py-2 rounded-lg duration-200 inline-block cursor-pointer hover:text-white hover:bg-slate-500 "
               >
-                <path
-                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                  fillRule="evenodd"
-                ></path>
-              </svg>
-            </button>
-          </header>
-          <div className="mt-4 mb-6">
-            <p className="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300">
-              Cập nhật vị trí
-            </p>
-
-            <div className="mb-10">
-              <img
-                src={location?.hinhAnh}
-                className="h-[200px] w-full object-cover rounded-[3px]"
-                alt="hinh anh phong thue"
-                id="showHinhVitriUpdate"
+                Change
+              </label>
+              <input
+                type="file"
+                name="hinhVitriUpdate"
+                id="hinhVitriUpdate"
+                className="hidden"
+                onChange={handleChangeHinhVitri}
               />
-
-              <div>
-                <label
-                  htmlFor="hinhVitriUpdate"
-                  className=" bg-gray-300 rounded-[3px] px-3 inline-block cursor-pointer hover:text-white hover:bg-slate-500 mt-3"
-                >
-                  Change
-                </label>
-                <input
-                  type="file"
-                  name="hinhVitriUpdate"
-                  id="hinhVitriUpdate"
-                  className="hidden"
-                  onChange={handleChangeHinhVitri}
-                />
-              </div>
             </div>
-
-            <Form
-              form={form}
-              layout="vertical"
-              onFinish={onFinish}
-              onFinishFailed={onFinishFailed}
-              autoComplete="off"
-            >
-              <div className="grid grid-cols-1">
-                <Form.Item
-                  name="id"
-                  label="Mã vị trí"
-                  initialValue={location?.id}
-                >
-                  <Input name="id" disabled placeholder="Điền tên vào đây..." />
-                </Form.Item>
-                <Form.Item
-                  name="tenViTri"
-                  label="Tên vị trí"
-                  initialValue={location?.tenViTri}
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng ghi tên vị trí!",
-                      whitespace: true,
-                    },
-                  ]}
-                >
-                  <Input
-                    name="tenViTri"
-                    placeholder="Điền tên vị trí vào đây..."
-                  />
-                </Form.Item>
-
-                <Form.Item
-                  name="tinhThanh"
-                  label="Tên tỉnh thành"
-                  initialValue={location?.tinhThanh}
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng ghi tên tỉnh thành!",
-                      whitespace: true,
-                    },
-                  ]}
-                >
-                  <Input
-                    name="tinhThanh"
-                    placeholder="Điền tên tỉnh thành vào đây..."
-                  />
-                </Form.Item>
-
-                <Form.Item
-                  name="quocGia"
-                  label="Tên quốc gia"
-                  initialValue={location?.quocGia}
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng ghi tên quốc gia!",
-                      whitespace: true,
-                    },
-                  ]}
-                >
-                  <Input
-                    name="quocGia"
-                    placeholder="Điền tên quốc gia vào đây..."
-                  />
-                </Form.Item>
-              </div>
-              <footer className="flex flex-col items-center justify-end px-6 py-3 -mx-6 -mb-4 space-y-4 sm:space-y-0 sm:space-x-6 sm:flex-row bg-gray-50 dark:bg-gray-800 mt-5">
-                <button
-                  onClick={closeUpdateForm}
-                  className="w-full px-5 py-3 text-sm font-medium leading-5  text-gray-700 transition-colors duration-150 border border-gray-300 rounded-lg dark:text-gray-400 sm:px-4 sm:py-2 sm:w-auto active:bg-transparent hover:border-gray-500 focus:border-gray-500 active:text-gray-500 focus:outline-none focus:shadow-outline-gray"
-                >
-                  Huỷ
-                </button>
-                <button className="w-full px-5 py-3 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-primary border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 active:bg-primary hover:bg-primary-dark focus:outline-none focus:shadow-outline-purple">
-                  Cập nhật
-                </button>
-              </footer>
-            </Form>
           </div>
+
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+            autoComplete="off"
+          >
+            <div className="grid grid-cols-1">
+              <Form.Item
+                name="id"
+                label="Mã vị trí"
+                initialValue={location?.id}
+              >
+                <Input name="id" disabled placeholder="Điền tên vào đây..." />
+              </Form.Item>
+              <Form.Item
+                name="tenViTri"
+                label="Tên vị trí"
+                initialValue={location?.tenViTri}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng ghi tên vị trí!",
+                    whitespace: true,
+                  },
+                ]}
+              >
+                <Input
+                  name="tenViTri"
+                  placeholder="Điền tên vị trí vào đây..."
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="tinhThanh"
+                label="Tên tỉnh thành"
+                initialValue={location?.tinhThanh}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng ghi tên tỉnh thành!",
+                    whitespace: true,
+                  },
+                ]}
+              >
+                <Input
+                  name="tinhThanh"
+                  placeholder="Điền tên tỉnh thành vào đây..."
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="quocGia"
+                label="Tên quốc gia"
+                initialValue={location?.quocGia}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng ghi tên quốc gia!",
+                    whitespace: true,
+                  },
+                ]}
+              >
+                <Input
+                  name="quocGia"
+                  placeholder="Điền tên quốc gia vào đây..."
+                />
+              </Form.Item>
+            </div>
+            <footer className="flex flex-col items-center justify-end px-6 py-3 -mx-6 -mb-4 space-y-4 sm:space-y-0 sm:space-x-6 sm:flex-row bg-gray-50  mt-5">
+              <button
+                onClick={closeUpdateForm}
+                className="w-full px-5 py-3 transition-colors duration-150 bg-white text-black border border-black-200 rounded-lg sm:w-auto sm:px-4 sm:py-2"
+              >
+                Huỷ
+              </button>
+              <button className="w-full px-5 py-3 text-white transition-colors duration-150 bg-main border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 ">
+                Cập nhật
+              </button>
+            </footer>
+          </Form>
         </div>
       </Modal>
     </>

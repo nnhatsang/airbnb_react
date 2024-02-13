@@ -155,7 +155,7 @@ const Header = () => {
           // console.log(mode);
           Auth.post_signup(values)
             .then((res) => {
-              console.log(res);
+              // console.log(res);
               message.success("Đăng ký thành công");
               toggleModalLogin();
             })
@@ -167,7 +167,7 @@ const Header = () => {
           break;
         }
         default:
-          console.log(mode);
+          // console.log(mode);
           return null;
       }
     },
@@ -291,7 +291,7 @@ const Header = () => {
       return (
         <>
           <button
-            className=" text-sm bg-main py-2 px-5 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 font-bold"
+            className=" text-sm bg-main py-2 px-5 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 font-bold duration-300 hover:scale-105 hover:bg-blue-800 hover:text-white"
             onClick={toggleLogin}
           >
             Login

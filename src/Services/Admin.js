@@ -18,13 +18,13 @@ export const Admin = {
   // room
   getRoomPage: (index, searchKeyword) =>
     API.get(
-      `/api/vi-tri/phan-trang-tim-kiem?pageIndex=${index}&pageSize=100&keyword=${searchKeyword}`
+      `/api/phong-thue/phan-trang-tim-kiem?pageIndex=${index}&pageSize=10&keyword=${searchKeyword}`
     ),
-  createRoom: (data) => API.post("/phong-thue", data),
+  createRoom: (data) => API.post("/api/phong-thue", data),
   uploadPhotoRoom: (id, photo) =>
-    API.post(`/phong-thue/upload-hinh-phong?maPhong=${id}`, photo),
-  deleteRoom: (id) => API.delete(`/phong-thue/${id}`),
-  updateRoom: (data) => API.put(`/phong-thue/${data.id}`, data),
+    API.post(`/api/phong-thue/upload-hinh-phong?maPhong=${id}`, photo),
+  deleteRoom: (id) => API.delete(`/api/phong-thue/${id}`),
+  updateRoom: (data) => API.put(`/api/phong-thue/${data.id}`, data),
 
   //location
   getLocationPage: (index, searchKeyword) =>
