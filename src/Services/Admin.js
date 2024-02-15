@@ -25,6 +25,7 @@ export const Admin = {
     API.post(`/api/phong-thue/upload-hinh-phong?maPhong=${id}`, photo),
   deleteRoom: (id) => API.delete(`/api/phong-thue/${id}`),
   updateRoom: (data) => API.put(`/api/phong-thue/${data.id}`, data),
+  get_idPhong: (id) => API.get(`/api/phong-thue/${id}`),
 
   //location
   getLocationPage: (index, searchKeyword) =>
