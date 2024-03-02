@@ -41,6 +41,7 @@ import { setLoadingOff, setLoadingOn } from "../../Redux/SpinnerSlice";
 import { setLogin, setNumPeop } from "../../Redux/UserSlice";
 import { TabTitle } from "../../Utils/SetTitle";
 import Rating from "./../../Components/Rating/Rating";
+import TitlePage from "../TitlePage";
 
 const options = {
   rangeColors: ["#e0565b"],
@@ -59,6 +60,7 @@ const BookCalendar = ({ bookedRangeDates, setBookedRangeDates }) => (
   />
 );
 const RoomDetail = () => {
+  const [errr, setErr] = useState("");
   const { dateRange, numPeop, user } = useSelector((state) => state.UserSlice);
   const [comments, setComments] = useState([]);
   const { roomId } = useParams();
@@ -102,7 +104,7 @@ const RoomDetail = () => {
         notification.success({
           message: res.data.message,
         });
-        setShowPopconfirm(false)
+        setShowPopconfirm(false);
       })
       .catch((err) =>
         message.error(
@@ -228,7 +230,9 @@ const RoomDetail = () => {
         setUsefulThings(updatedUsefulThings);
         dispatch(setLoadingOff());
       } catch (error) {
-        console.log(error);
+        dispatch(setLoadingOff());
+
+        setErr("Có lỗi xảy ra vui lòng thử lại");
       }
     }
     fetchData();
@@ -255,6 +259,14 @@ const RoomDetail = () => {
       })
       .catch((err) => console.log(err));
   }, [roomId]);
+  if (errr) {
+    return (
+      <>
+        <div className="pb-28 border-b-2"></div>
+        <TitlePage title={errr} />
+      </>
+    );
+  }
   return (
     <>
       {/* <TitlePage /> */}
