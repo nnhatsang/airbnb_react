@@ -13,7 +13,7 @@ import TitlePage from "../TitlePage";
 import FilterNav from "./../../Components/FilterNav/FilterNav";
 
 const RoomLocate = () => {
-  const { dateRange } = useSelector((state) => state.UserSlice);
+  const { dateRange, numPeop } = useSelector((state) => state.UserSlice);
   const dispatch = useDispatch();
   const { cityName } = useParams();
   const [roomCity, setRoomCity] = useState([]);
@@ -33,7 +33,11 @@ const RoomLocate = () => {
 
         // Lấy danh sách phòng theo địa điểm
         const phongRes = await Phong.get_datPhongTheoViTri(data[0].id);
-        setRoomCity(phongRes.data.content);
+        const filteredRooms = phongRes.data.content.filter(
+          (room) => room.khach >= numPeop
+        );
+        setRoomCity(filteredRooms);
+        // setRoomCity(phongRes.data.content);
         // console.log(phongRes.data.content);
         dispatch(setLoadingOff());
       } catch (err) {
@@ -41,17 +45,10 @@ const RoomLocate = () => {
         dispatch(setLoadingOff());
       }
     };
-
     fetchData();
-  }, []);
+  }, [cityName, numPeop, dispatch]);
 
-  const filter = [
-    "Loại nơi ở",
-    "Giá",
-    "Đặt ngay",
-    "Phòng và phòng ngủ",
-    "Bộ lọc khác",
-  ];
+
 
   return (
     <>
@@ -77,16 +74,7 @@ const RoomLocate = () => {
               <h1 className="font-bold text-3xl text-black">
                 Chỗ ở tại khu vực bản đồ đã chọn
               </h1>
-              {/* <div className="flex flex-wrap gap-3">
-                {filter.map((item, index) => (
-                  <button
-                    className="rounded-lg text-md bg-white text-black border border-gray-300 hover:border-gray-900 duration-300 px-6 py-2"
-                    key={index}
-                  >
-                    {item}
-                  </button>
-                ))}
-              </div> */}
+
               <div className="space-y-6">
                 {roomCity?.map((i, index) => (
                   <RoomsLocate item={i} city={cityNoSlug} />
@@ -96,17 +84,7 @@ const RoomLocate = () => {
           )}
         </div>
         <div className="h-screen w-full block sticky top-28 mt-16">
-          <Gmaps place={cityNoSlug} />
-          {/* <iframe
-            src={`https://www.google.com/maps/embed/v1/place?q=${cityNoSlug}&key=AIzaSyB-M500zF9hEI3OoOPyK_dVHfWDyZcx5fI`}
-            width="100%"
-            height="550px"
-            allowFullScreen=""
-            referrerPolicy="no-referrer-when-downgrade"
-            onLoad={() => handleLoadMap()}
-            className={`${mapMounted ? "block" : "hidden"} rounded-lg`}
-          ></iframe> */}
-          {/* {!mapMounted && <Skeleton height={550} className="rounded-lg" />} */}
+          <Gmaps locationInfo={cityNoSlug} />
         </div>
       </div>
     </>

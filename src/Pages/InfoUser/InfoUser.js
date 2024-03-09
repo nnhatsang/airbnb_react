@@ -33,7 +33,6 @@ import {
 } from "@ant-design/pro-components";
 import RoomsLocate from "../../Components/RoomsLocate/RoomsLocate";
 import viVN from "antd/lib/locale/vi_VN"; // Import ngôn ngữ tiếng Việt
-import moment from "moment";
 const waitTime = (time = 100) => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -356,7 +355,7 @@ const InfoUser = () => {
                   width="md"
                   name="birthday"
                   label="Ngày sinh"
-                  format="DD-MM-YYYY"
+                  format="DD/MM/YYYY"
                   placeholder="Chọn ngày sinh"
                   rules={[
                     {

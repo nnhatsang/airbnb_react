@@ -14,8 +14,8 @@ const SpinnerSlice = createSlice({
       state.count += 1;
     },
     setLoadingOff: (state) => {
-      state.count -= 1;
-      state.count === 0 ? (state.isLoading = false) : (state.isLoading = true);
+     state.count = Math.max(0, state.count - 1);
+     state.isLoading = state.count > 0;
     },
   },
 });

@@ -8,7 +8,7 @@ import { setLoadingOff, setLoadingOn } from "../../Redux/SpinnerSlice";
 import dayjs from "dayjs";
 
 const ListRoom = () => {
-  const { dateRange, locateAt } = useSelector((state) => {
+  const { dateRange, locateAt, numPeop } = useSelector((state) => {
     return state.UserSlice;
   });
   const [listRoom, setListRoom] = useState([]);
@@ -17,29 +17,26 @@ const ListRoom = () => {
     dispatch(setLoadingOn());
     Phong.get_listPhong()
       .then((res) => {
-        setListRoom(res.data.content);
+         const filteredRooms = res.data.content.filter(
+           (room) => room.khach >= numPeop
+         );
+         setListRoom(filteredRooms);
+        // setListRoom(res.data.content);
+        console.log(res.data.content);
         dispatch(setLoadingOff());
       })
       .catch((err) => {
         console.log(err);
         dispatch(setLoadingOff());
       });
-  }, []);
-  const filter = [
-    "Loại nơi ở",
-    "Giá",
-    "Đặt ngay",
-    "Phòng và phòng ngủ",
-    "Bộ lọc khác",
-  ];
-  console.log(listRoom);
+  }, [numPeop, dispatch]);
+
+  // console.log(listRoom);
   return (
     <>
-    
       <TitlePage title={"Danh sách phòng hiện tại"} />
       <FilterNav />
       <>
-      
         <div className="container mt-5 py-5">
           <p className="mb-5 font-bold">
             Có {listRoom.length ?? 0} chỗ ở tại {locateAt} •{" "}

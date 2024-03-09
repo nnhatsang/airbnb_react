@@ -9,7 +9,6 @@ import { setLoadingOff } from "../../Redux/SpinnerSlice";
 
 const UserTemplate = () => {
   const { isLoading } = useSelector((state) => state.SpinnerSlice);
-  const dispatch = useDispatch();
   return (
     <>
       {isLoading ? <Loading /> : null}

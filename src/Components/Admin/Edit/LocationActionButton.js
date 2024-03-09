@@ -4,7 +4,7 @@ import { Admin } from "../../../Services/Admin";
 import { useDispatch } from "react-redux";
 import { setLoadingOff } from "../../../Redux/SpinnerSlice";
 
-const LocationActionButton = ({ locatID, renderLocaPage }) => {
+const LocationActionButton = ({ locatID, renderLocationPage }) => {
   // console.log(locatID);
   const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -35,8 +35,8 @@ const LocationActionButton = ({ locatID, renderLocaPage }) => {
       .then((response) => {
         message.info(response.data.message);
         closeModal();
-        renderLocaPage();
-        dispatch(setLoadingOff());
+        renderLocationPage();
+        // dispatch(setLoadingOff());
       })
       .catch((error) => {
         console.log(error);
@@ -46,7 +46,6 @@ const LocationActionButton = ({ locatID, renderLocaPage }) => {
     Admin.getLocationByID(locatID)
       .then((response) => {
         setLocation(response.data.content);
-        // console.log(location);
       })
       .catch((error) => {
         console.log(error);
@@ -75,8 +74,8 @@ const LocationActionButton = ({ locatID, renderLocaPage }) => {
               message.success(result.data.message);
               setIsChange(false);
               closeUpdateForm();
-              renderLocaPage();
-              dispatch(setLoadingOff());
+              renderLocationPage();
+              // dispatch(setLoadingOff());
             })
             .catch((error) => {
               console.log(error);

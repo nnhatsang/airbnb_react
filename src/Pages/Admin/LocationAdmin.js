@@ -18,9 +18,10 @@ const LocationAdmin = () => {
   const [errHinhAnh, setErrHinhAnh] = useState(null);
 
   const handleSearchInputChange = (e) => {
-    setSearchKeyword(e.target.value);
+    const keyword = e.target.value;
+    setSearchKeyword(keyword);
     // Gọi API với từ khóa tìm kiếm
-    renderLocationPage(1, e.target.value);
+    renderLocationPage(1, keyword);
   };
 
   const handleChangeHinhAnh = (evt) => {
@@ -37,9 +38,14 @@ const LocationAdmin = () => {
     setIsSelectedPhoto(true);
     setErrHinhAnh(null);
   };
-  const renderLocationPage = (index, searchKeyword = " ") => {
+  const getCurrentSearchKeyword = () => {
+    return searchKeyword;
+  };
+  const renderLocationPage = (index = 1, searchKeyword) => {
     dispatch(setLoadingOn());
-    Admin.getLocationPage(index, searchKeyword)
+    const currentSearchKeyword = searchKeyword || getCurrentSearchKeyword();
+
+    Admin.getLocationPage(index, currentSearchKeyword)
       .then((res) => {
         setListLocation(res.data.content.data);
         setTotalRow(res.data.content.totalRow);
@@ -54,11 +60,11 @@ const LocationAdmin = () => {
       });
   };
   useEffect(() => {
-    renderLocationPage(1);
-  }, []);
+    renderLocationPage(1, searchKeyword);
+  }, [searchKeyword]);
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    renderLocationPage(page);
+    renderLocationPage(page, searchKeyword);
   };
   const columns = [
     {
@@ -98,7 +104,7 @@ const LocationAdmin = () => {
         <div className="space-x-3">
           <LocationActionButton
             locatID={record.id}
-            renderLocaPage={renderLocationPage}
+            renderLocationPage={renderLocationPage}
           />
         </div>
       ),
@@ -168,7 +174,7 @@ const LocationAdmin = () => {
       <Table dataSource={listLocation} columns={columns} pagination={false} />
       <Pagination
         current={currentPage}
-        pageSize={10}
+        pageSize={3}
         total={totalRow}
         onChange={handlePageChange}
         showSizeChanger={false}

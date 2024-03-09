@@ -30,7 +30,7 @@ export const Admin = {
   //location
   getLocationPage: (index, searchKeyword) =>
     API.get(
-      `/api/vi-tri/phan-trang-tim-kiem?pageIndex=${index}&pageSize=10&keyword=${searchKeyword}`
+      `/api/vi-tri/phan-trang-tim-kiem?pageIndex=${index}&pageSize=3&keyword=${searchKeyword}`
     ),
   getLocationByID: (id) => API.get(`/api/vi-tri/${id}`),
   createLocation: (data) => API.post("/api/vi-tri", data),

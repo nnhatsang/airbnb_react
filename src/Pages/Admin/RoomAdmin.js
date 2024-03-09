@@ -17,7 +17,6 @@ import { Vitri } from "../../Services/Vitri";
 import { Link } from "react-router-dom";
 import "./RoomAdmin.scss";
 import RoomActionsButton from "../../Components/Admin/Edit/RoomActionsButton";
-import PopupRoomInfo from "./PopupRoomInfo";
 
 const RoomAdmin = () => {
   const [listRoom, setListRoom] = useState([]);
@@ -125,7 +124,6 @@ const RoomAdmin = () => {
         <Popover
           content={
             <>
-              {/* <PopupRoomInfo room={record} index={record} /> */}
               <Link to={`/room-detail/${record.id}`}>
                 Thông tin chi tiết phòng ${record.tenPhong}
               </Link>

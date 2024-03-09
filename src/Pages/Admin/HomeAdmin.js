@@ -26,17 +26,24 @@ const HomeAdmin = () => {
   const [totalRow, setTotalRow] = useState();
   const [showModalCreate, setShowModalCreate] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const getCurrentSearchKeyword = () => {
+    return searchKeyword;
+  };
   const handleSearchInputChange = (e) => {
-    setSearchKeyword(e.target.value);
-    // Gọi API với từ khóa tìm kiếm
-    renderUserPage(1, e.target.value);
+    const keyword = e.target.value;
+    setSearchKeyword(keyword); // Cập nhật trạng thái từ khóa tìm kiếm
+    renderUserPage(1, keyword); // Gọi lại hàm renderUserPage với từ khóa mới
   };
 
-  const renderUserPage = (index, searchKeyword = " ") => {
+  const renderUserPage = (index = 1, searchKeyword) => {
     dispatch(setLoadingOn());
-    Admin.getUsersPage(index, searchKeyword)
+    // Sử dụng searchKeyword trong lời gọi API để đảm bảo tìm kiếm được thực hiện với từ khóa đúng
+    const currentSearchKeyword = searchKeyword || getCurrentSearchKeyword();
+
+    Admin.getUsersPage(index, currentSearchKeyword)
       .then((res) => {
         setListUser(res.data.content.data);
+        // console.log(res.data.content.totalRow);
         setTotalRow(res.data.content.totalRow);
         setTotalPages(
           Math.ceil(res.data.content.totalRow / res.data.content.pageSize)
@@ -45,16 +52,18 @@ const HomeAdmin = () => {
       })
       .catch((err) => {
         console.log(err);
+        dispatch(setLoadingOff());
       });
   };
 
+  // Sử dụng useEffect để khởi tạo danh sách người dùng với trang đầu tiên và từ khóa tìm kiếm rỗng
   useEffect(() => {
-    renderUserPage(1);
-  }, []);
+    renderUserPage(1, searchKeyword);
+  }, [searchKeyword]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    renderUserPage(page);
+    renderUserPage(page, searchKeyword);
   };
 
   const columns = [
@@ -62,6 +71,7 @@ const HomeAdmin = () => {
       title: "Nã ID",
       dataIndex: "id",
       key: "id",
+      sorter: (a, b) => a.id - b.id, // Sắp xếp theo ID
     },
     {
       title: "Username",
@@ -87,10 +97,11 @@ const HomeAdmin = () => {
       title: "Birthday",
       dataIndex: "birthday",
       key: "birthday",
-      render: (text) => {
-        const formattedDate = moment(text, "YYYY-MM-DD").format("DD/MM/YYYY");
-        return moment(text, "YYYY-MM-DD").isValid() ? (
-          <p>{formattedDate}</p>
+      render: (text, record) => {
+        return moment(text, ["DD/MM/YYYY", "YYYY-MM-DD"]).isValid() ? (
+          <p>
+            {moment(text, ["DD/MM/YYYY", "YYYY-MM-DD"]).format("DD/MM/YYYY")}
+          </p>
         ) : (
           <p>Invalid Date</p>
         );
@@ -116,6 +127,11 @@ const HomeAdmin = () => {
           {text}
         </p>
       ),
+      filters: [
+        { text: "ADMIN", value: "ADMIN" },
+        { text: "USER", value: "USER" },
+      ],
+      onFilter: (value, record) => record.role === value,
     },
     {
       title: "Hành động",
@@ -179,7 +195,15 @@ const HomeAdmin = () => {
           value={searchKeyword}
         />
       </div>
-      <Table dataSource={listUser} columns={columns} pagination={false} />
+      <Table
+        dataSource={listUser}
+        columns={columns}
+        pagination={false}
+        onChange={(pagination, filters, sorter) => {
+          // Gọi hàm để tải lại dữ liệu với tham số sắp xếp từ sorter
+          // Ví dụ: fetchSortedData(sorter.field, sorter.order)
+        }}
+      />
       <div className="mb-5"></div>
       <Pagination
         current={currentPage}
@@ -190,7 +214,7 @@ const HomeAdmin = () => {
         showTotal={(total, range) =>
           `${range[0]}-${range[1]} of ${total} items`
         }
-      />{" "}
+      />
       <div className="py-3 pb-10"></div>
       <Modal
         open={showModalCreate}
@@ -282,6 +306,7 @@ const HomeAdmin = () => {
               <Form.Item
                 name="gender"
                 label="Giới tính"
+                a
                 rules={[
                   {
                     required: true,
@@ -307,7 +332,7 @@ const HomeAdmin = () => {
                 <DatePicker
                   className="w-full"
                   placeholder="Chọn ngày sinh"
-                  format="DD-MM-YYYY"
+                  format="DD/MM/YYYY"
                 />
               </Form.Item>
               <Form.Item
@@ -338,9 +363,7 @@ const HomeAdmin = () => {
               >
                 Huỷ
               </button>
-              <button
-                className="w-full px-5 py-3 text-white transition-colors duration-150 bg-main border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 "
-              >
+              <button className="w-full px-5 py-3 text-white transition-colors duration-150 bg-main border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 ">
                 Thêm người dùng
               </button>
             </div>

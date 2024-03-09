@@ -1,8 +1,39 @@
-import { Form, Input, Modal, Radio, Select, message } from "antd";
+import { DatePicker, Form, Input, Modal, Radio, Select, message } from "antd";
 import { useEffect, useState } from "react";
 import { Admin } from "../../../Services/Admin";
+import { ProFormDatePicker } from "@ant-design/pro-components";
+import moment from "moment";
+import { useDispatch } from "react-redux";
+import { setLoadingOff } from "../../../Redux/SpinnerSlice";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+// Extend dayjs to use custom parsing format
+dayjs.extend(customParseFormat);
+
+const formatBirthday = (birthday) => {
+  // List of known formats in the data
+  const formats = [
+    "DD/MM/YYYY",
+    "YYYY-MM-DDTHH:mm:ss.SSSZ",
+    "DD/MM/YY",
+    "YYYY-MM-DD",
+    "MM/DD/YYYY", // Add more formats as needed
+  ];
+
+  // Attempt to parse the date using known formats
+  for (let format of formats) {
+    if (dayjs(birthday, format, true).isValid()) {
+      return dayjs(birthday, format).format("DD/MM/YYYY");
+    }
+  }
+
+  // If the date is in an unknown format or invalid, return a placeholder or handle as needed
+  return "Invalid Date";
+};
 
 const UserActionButton = ({ userID, renderUserPage }) => {
+  const dispatch = useDispatch();
   const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -32,9 +63,11 @@ const UserActionButton = ({ userID, renderUserPage }) => {
     Admin.getUserByID(userID)
       .then((response) => {
         setUser(response.data.content);
+        dispatch(setLoadingOff());
       })
       .catch((error) => {
         console.log(error);
+        dispatch(setLoadingOff());
       });
   }, [userID]);
 
@@ -42,10 +75,10 @@ const UserActionButton = ({ userID, renderUserPage }) => {
     console.error("Failed:", errorInfo);
   };
 
-  const onFinish = (values) => {
+  const onFinish = (user) => {
     const processValues = {
-      ...values,
-      gender: values.gender === "male" ? true : false,
+      ...user,
+      gender: user.gender === "male" ? true : false,
     };
 
     Admin.updateUser(processValues)
@@ -55,9 +88,11 @@ const UserActionButton = ({ userID, renderUserPage }) => {
         );
         closeUpdateForm();
         renderUserPage();
+        // dispatch(setLoadingOff());
       })
       .catch((error) => {
         message.error(error.response.data.content);
+        dispatch(setLoadingOff());
       });
   };
 
@@ -146,15 +181,18 @@ const UserActionButton = ({ userID, renderUserPage }) => {
                     name="phone"
                     label="Số điện thoại"
                     initialValue={user ? user?.phone : ""}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng nhập số điện thoại!",
-                        whitespace: true,
-                      },
-                    ]}
+                   rules={[
+                    {
+                      pattern: new RegExp(/^0(?!0)\d{9}$/g),
+                      message: "Sai định dạng số điện thoại!",
+                    },
+                    {
+                      required: true,
+                      message: "Vui lòng nhập số điện thoại!",
+                    },
+                  ]}
                   >
-                    <Input name="phone" placeholder="Điền  số điện thoại..." />
+                    <Input name="phone" placeholder="Điền số điện thoại..." />
                   </Form.Item>
 
                   <Form.Item
@@ -194,7 +232,7 @@ const UserActionButton = ({ userID, renderUserPage }) => {
                   <Form.Item
                     name="birthday"
                     label="Ngày sinh"
-                    initialValue={user?.birthday}
+                    initialValue={formatBirthday(user?.birthday)}
                     rules={[
                       {
                         required: true,
@@ -202,8 +240,9 @@ const UserActionButton = ({ userID, renderUserPage }) => {
                       },
                     ]}
                   >
-                    <Input placeholder="22/02/2022" />
+                    <ProFormDatePicker format="DD/MM/YYYY" />
                   </Form.Item>
+
                   <Form.Item
                     name="role"
                     label="Chức vụ"

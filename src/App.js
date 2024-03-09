@@ -18,26 +18,30 @@ import UserTemplate from "./Template/UserTemplate/UserTemplate";
 import LocationAdmin from "./Pages/Admin/LocationAdmin";
 import RoomAdmin from "./Pages/Admin/RoomAdmin";
 
+import { ConfigProvider } from "antd";
+import viVN from "antd/lib/locale/vi_VN";
 function App() {
   AOS.init();
   return (
     <>
       <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<UserTemplate />}>
-          <Route index element={<HomePage />} />
-          <Route path="rooms" element={<ListRoom />} />
-          <Route path="info-user" element={<InfoUser />} />
-          <Route path="rooms/:cityName" element={<RoomLocate />} />
-          <Route path="room-detail/:roomId" element={<RoomDetail />} />
-        </Route>
-        <Route path="admin" element={<AdminTemplate />}>
-          <Route index element={<HomeAdmin />} />
-          <Route path="location" element={<LocationAdmin />} />
-          <Route path="room" element={<RoomAdmin />} />
-        </Route>
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
+      <ConfigProvider locale={viVN}>
+        <Routes>
+          <Route path="/" element={<UserTemplate />}>
+            <Route index element={<HomePage />} />
+            <Route path="rooms" element={<ListRoom />} />
+            <Route path="info-user" element={<InfoUser />} />
+            <Route path="rooms/:cityName" element={<RoomLocate />} />
+            <Route path="room-detail/:roomId" element={<RoomDetail />} />
+          </Route>
+          <Route path="admin" element={<AdminTemplate />}>
+            <Route index element={<HomeAdmin />} />
+            <Route path="location" element={<LocationAdmin />} />
+            <Route path="room" element={<RoomAdmin />} />
+          </Route>
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </ConfigProvider>
     </>
   );
 }

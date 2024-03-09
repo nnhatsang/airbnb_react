@@ -3,20 +3,20 @@ import dayjs from "dayjs";
 import React, { useEffect, useRef, useState } from "react";
 import { DateRangePicker } from "react-date-range";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { setDateRange, setLocatedAt, setNumPeop } from "../../Redux/UserSlice";
 import { Vitri } from "../../Services/Vitri";
 import convertToSlug from "../../Utils/convertToSlug";
 import { setLoadingOff, setLoadingOn } from "../../Redux/SpinnerSlice";
+import convertDeleteSlug from "../../Utils/convertDeleteSlug";
+import convertAccentedVietnamese from "../../Utils/convertAccentedVietnamese";
 
 const FilterNav = () => {
   const { locatedAt, dateRange, numPeop } = useSelector(
     (state) => state.UserSlice
   );
   const navigate = useNavigate();
-  // const location = useLocation();
 
-  // console.log(location);
   const [showSearchLocation, setShowSearchLocation] = useState(false);
   const [showSearchDateRange, setShowSearchDateRange] = useState(false);
   const [showSearchGuests, setShowSearchGuests] = useState(false);
@@ -41,6 +41,7 @@ const FilterNav = () => {
     Vitri.get_vitri_phanTrang()
       .then((res) => {
         setCities(res.data.content.data);
+        // console.log(res.data.content.data);
         dispatch(setLoadingOff());
       })
       .catch((err) => {
@@ -60,6 +61,9 @@ const FilterNav = () => {
     rangeColors: ["#e0565b"],
     minDate: new Date(),
   };
+
+
+ 
   return (
     <>
       <div className="container py-10 relative ">
@@ -74,7 +78,6 @@ const FilterNav = () => {
                   setShowSearchLocation(false);
                 }}
               >
-                {" "}
                 <div className="">
                   <img
                     className="w-20  h-20 object-cover rounded-lg border-2 group-hover:border-gray-600 duration-300"
@@ -180,12 +183,14 @@ const FilterNav = () => {
             <div
               className="bg-main ml-5 hover:bg-[#9e3e4e] duration-300 text-white rounded-full p-2 flex justify-center items-center"
               onClick={() => {
-                if (locatedAt) {
+                if (
+                  locatedAt
+                ) {
                   navigate(`/rooms/${convertToSlug(locatedAt)}`);
                   setShowSearchGuests(false);
                   setShowSearchLocation(false);
                   setShowSearchDateRange(false);
-                } else {
+                } else  {
                   navigate(`/rooms`);
                   setShowSearchGuests(false);
                   setShowSearchLocation(false);

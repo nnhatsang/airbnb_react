@@ -182,7 +182,6 @@ const RoomDetail = () => {
       dispatch(setLoadingOn());
       try {
         const getIdRoom = await Phong.get_idPhong(roomId);
-        // const getCommentRoom = await Phong.get_binhLuan(roomId);
         const getCityNation = await Vitri.get_idViTri(
           getIdRoom.data.content.maViTri
         );
@@ -190,7 +189,6 @@ const RoomDetail = () => {
           ...getIdRoom.data.content,
           tinhThanh: getCityNation.data.content.tinhThanh,
           quocGia: getCityNation.data.content.quocGia,
-          // listComment: getCommentRoom.data.content.reverse(),
         };
         // console.log(tempData);
         setRoom(tempData);
@@ -482,7 +480,7 @@ const RoomDetail = () => {
             <div className="mb-5 w-full h-px bg-gray-300 "></div>
           </div>
           <div className="basis-1/12 empty"></div>
-          <div className="basis-4/12 space-y-6 sticky w-full lg:h-[350px] top-32">
+          <div className="basis-4/12 space-y-6 sticky w-full lg:h-[350px] top-32 mb-10">
             <div className="p-6 rounded-lg border-2 border-gray-300 space-y-6 shadow-xl">
               <div className="flex flex-wrap justify-between items-center gap-3">
                 <div>
@@ -607,7 +605,7 @@ const RoomDetail = () => {
             Ẩn bớt tiện nghi
           </button>
         </div>
-        {comments?.length > 0 && <div className="pb-[30px]"></div>}
+        {comments?.length > 0 && <div className="pb-[30px] "></div>}
         <div className="mb-5 w-full h-px bg-gray-300 "></div>
         {user === null ? (
           <Alert message="Cần đăng nhập để bình luận" type="warning" />
@@ -682,7 +680,6 @@ const RoomDetail = () => {
 
         {comments.length > 0 ? (
           <>
-            <div ref={binhLuanRef} className="pb-[50px]"></div>
             <div
               className={`grid grid-cols-1 lg:grid-cols-2 gap-12 ${
                 comments.length > 4 && "h-[300px]"
@@ -696,7 +693,6 @@ const RoomDetail = () => {
         ) : (
           <p>Chưa có bình luận</p>
         )}
-        {/* <div className="mb-5 w-full h-px bg-gray-300 "></div> */}
       </div>
       <Modal
         title={
