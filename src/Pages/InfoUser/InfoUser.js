@@ -356,7 +356,7 @@ const InfoUser = () => {
                   width="md"
                   name="birthday"
                   label="Ngày sinh"
-                  format="DD-MM-YYYY"
+                  format="DD/MM/YYYY"
                   placeholder="Chọn ngày sinh"
                   rules={[
                     {

@@ -32,7 +32,7 @@ const ListRoom = () => {
     "Phòng và phòng ngủ",
     "Bộ lọc khác",
   ];
-  console.log(listRoom);
+  // console.log(listRoom);
   return (
     <>
     

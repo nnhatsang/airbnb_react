@@ -37,6 +37,7 @@ const HomeAdmin = () => {
     Admin.getUsersPage(index, searchKeyword)
       .then((res) => {
         setListUser(res.data.content.data);
+        console.log(res.data.content.data);
         setTotalRow(res.data.content.totalRow);
         setTotalPages(
           Math.ceil(res.data.content.totalRow / res.data.content.pageSize)
@@ -87,10 +88,9 @@ const HomeAdmin = () => {
       title: "Birthday",
       dataIndex: "birthday",
       key: "birthday",
-      render: (text) => {
-        const formattedDate = moment(text, "YYYY-MM-DD").format("DD/MM/YYYY");
-        return moment(text, "YYYY-MM-DD").isValid() ? (
-          <p>{formattedDate}</p>
+      render: (text, record) => {
+        return moment(text, ["DD/MM/YYYY", "YYYY-MM-DD"]).isValid() ? (
+          <p>{moment(text, ["DD/MM/YYYY", "YYYY-MM-DD"]).format("DD/MM/YYYY")}</p>
         ) : (
           <p>Invalid Date</p>
         );
@@ -179,7 +179,15 @@ const HomeAdmin = () => {
           value={searchKeyword}
         />
       </div>
-      <Table dataSource={listUser} columns={columns} pagination={false} />
+      <Table
+        dataSource={listUser}
+        columns={columns}
+        pagination={false}
+        onChange={(pagination, filters, sorter) => {
+          // Gọi hàm để tải lại dữ liệu với tham số sắp xếp từ sorter
+          // Ví dụ: fetchSortedData(sorter.field, sorter.order)
+        }}
+      />
       <div className="mb-5"></div>
       <Pagination
         current={currentPage}
@@ -190,7 +198,7 @@ const HomeAdmin = () => {
         showTotal={(total, range) =>
           `${range[0]}-${range[1]} of ${total} items`
         }
-      />{" "}
+      />
       <div className="py-3 pb-10"></div>
       <Modal
         open={showModalCreate}
@@ -307,7 +315,7 @@ const HomeAdmin = () => {
                 <DatePicker
                   className="w-full"
                   placeholder="Chọn ngày sinh"
-                  format="DD-MM-YYYY"
+                  format="DD/MM/YYYY"
                 />
               </Form.Item>
               <Form.Item
@@ -338,9 +346,7 @@ const HomeAdmin = () => {
               >
                 Huỷ
               </button>
-              <button
-                className="w-full px-5 py-3 text-white transition-colors duration-150 bg-main border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 "
-              >
+              <button className="w-full px-5 py-3 text-white transition-colors duration-150 bg-main border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 ">
                 Thêm người dùng
               </button>
             </div>

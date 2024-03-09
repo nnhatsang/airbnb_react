@@ -29,6 +29,27 @@ import dayjs from "dayjs";
 import FilterNav from "../../Components/FilterNav/FilterNav";
 
 import logo from "./../../Assets/Images/airbnb-1.svg";
+const validationSchemas = {
+  login: Yup.object({
+    email: Yup.string()
+      .required("Vui lòng không bỏ trống")
+      .email("Vui lòng nhập đúng định dạng email"),
+    password: Yup.string().required("Vui lòng không bỏ trống"),
+  }),
+  signup: Yup.object({
+    email: Yup.string()
+      .required("Vui lòng không bỏ trống")
+      .email("Vui lòng nhập đúng định dạng email"),
+    password: Yup.string().required("Vui lòng không bỏ trống"),
+    name: Yup.string().required("Vui lòng không bỏ trống"),
+    phone: Yup.string()
+      .required("Vui lòng không bỏ trống")
+      .matches(/^[0-9]{10}$/, "Số điện thoại không hợp lệ"),
+    birthday: Yup.string().required("Vui lòng chọn ngày sinh"),
+    gender: Yup.string().required("Vui lòng chọn giới tính"),
+  }),
+};
+
 const Header = () => {
   const { user } = useSelector((state) => state.UserSlice);
   // const user = userLocalStorage.get();
@@ -116,6 +137,7 @@ const Header = () => {
     resetForm,
   } = useFormik({
     initialValues: {
+      name: "",
       email: "",
       password: "",
       phone: "",
@@ -152,10 +174,16 @@ const Header = () => {
           break;
         }
         case "signup": {
+          const processValues = {
+            ...values,
+            gender: values.gender === "male" ? true : false,
+          };
+
           // console.log(mode);
-          Auth.post_signup(values)
+          Auth.post_signup(processValues)
             .then((res) => {
               // console.log(res);
+
               message.success("Đăng ký thành công");
               toggleModalLogin();
             })
@@ -172,31 +200,33 @@ const Header = () => {
       }
     },
 
-    validationSchema: Yup.object().shape({
-      email: Yup.string()
-        .required("Vui lòng không bỏ trống")
-        .email("Vui lòng nhập đúng định dạng email"),
-      password: Yup.string().required("Vui lòng không bỏ trống"),
-      // Thêm các điều kiện kiểm tra cho registration
-      name: Yup.string().when("mode", {
-        is: "signup",
-        then: Yup.string().required("Vui lòng không bỏ trống"),
-      }),
-      phone: Yup.string().when("mode", {
-        is: "signup",
-        then: Yup.string()
-          .required("Vui lòng không bỏ trống")
-          .matches(/^[0-9]{10}$/, "Số điện thoại không hợp lệ"),
-      }),
-      birthday: Yup.string().when("mode", {
-        is: "signup",
-        then: Yup.string().required("Vui lòng chọn ngày sinh"),
-      }),
-      gender: Yup.string().when("mode", {
-        is: "signup",
-        then: Yup.string().required("Vui lòng chọn giới tính"),
-      }),
-    }),
+    // validationSchema: Yup.object().shape({
+    //   email: Yup.string()
+    //     .required("Vui lòng không bỏ trống")
+    //     .email("Vui lòng nhập đúng định dạng email"),
+    //   password: Yup.string().required("Vui lòng không bỏ trống"),
+    //   // Thêm các điều kiện kiểm tra cho registration
+    //   name: Yup.string().when("mode", {
+    //     is: "signup",
+    //     then: Yup.string().required("Vui lòng không bỏ trống"),
+    //   }),
+    //   phone: Yup.string().when("mode", {
+    //     is: "signup",
+    //     then: Yup.string()
+    //       .required("Vui lòng không bỏ trống")
+    //       .matches(/^[0-9]{10}$/, "Số điện thoại không hợp lệ"),
+    //   }),
+    //   birthday: Yup.string().when("mode", {
+    //     is: "signup",
+    //     then: Yup.string().required("Vui lòng chọn ngày sinh"),
+    //   }),
+    //   gender: Yup.string().when("mode", {
+    //     is: "signup",
+    //     then: Yup.string().required("Vui lòng chọn giới tính"),
+    //   }),
+    // }),
+    validationSchema:
+      mode === "signup" ? validationSchemas.signup : validationSchemas.login,
   });
 
   // render login user
@@ -291,10 +321,13 @@ const Header = () => {
       return (
         <>
           <button
-            className=" text-sm bg-main py-2 px-5 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 font-bold duration-300 hover:scale-105 hover:bg-blue-800 hover:text-white"
+            className=" text-sm bg-main  rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 font-bold duration-300 hover:scale-105 hover:bg-white hover:text-white"
             onClick={toggleLogin}
           >
-            Login
+            <img
+              className="h-10"
+              src="https://cdn-icons-png.flaticon.com/512/6596/6596121.png"
+            />
           </button>
         </>
       );
@@ -346,7 +379,10 @@ const Header = () => {
                   </li>
                   <li>
                     <button
-                      onClick={toggleModalSignUp}
+                      onClick={() => {
+                        toggleModalSignUp();
+                        setMode("signup");
+                      }}
                       className="block text-center px-5 w-full rounded py-2 text-sm text-gray-700 hover:bg-gray-300 "
                     >
                       Đăng ký
@@ -395,7 +431,7 @@ const Header = () => {
                   className={({ isActive, isPending }) => {
                     return isActive
                       ? "text-[#FE6B6E] smm:px-3 smm:py-2 smm:block "
-                      : "block py-2 px-3  rounded hover:bg-gray-100 hover:text-black md:hover:bg-transparent md:hover:text-blue-700 md:p-0 duration-300";
+                      : "block py-2 px-3  rounded hover:bg-gray-100 hover:text-main md:hover:bg-transparent  md:p-0 duration-300";
                   }}
                 >
                   Home
@@ -404,7 +440,7 @@ const Header = () => {
               <li>
                 <NavLink
                   // to={"/about"}
-                  className="block py-2 px-3  rounded hover:bg-gray-100 hover:text-black md:hover:bg-transparent md:hover:text-blue-700 md:p-0 duration-300"
+                  className="block py-2 px-3  rounded hover:bg-gray-100 hover:text-main md:hover:bg-transparent  md:p-0 duration-300"
                 >
                   About
                 </NavLink>
@@ -412,7 +448,7 @@ const Header = () => {
               <li>
                 <NavLink
                   // to={"/listroom"}
-                  className="block py-2 px-3 rounded hover:bg-gray-100 hover:text-black md:hover:bg-transparent md:hover:text-blue-700 md:p-0 duration-300"
+                  className="block py-2 px-3 rounded hover:bg-gray-100 hover:text-main md:hover:bg-transparent  md:p-0 duration-300"
                 >
                   Services
                 </NavLink>
@@ -420,7 +456,7 @@ const Header = () => {
               <li>
                 <a
                   href="#"
-                  className="block py-2 px-3 rounded hover:bg-gray-100 hover:text-black md:hover:bg-transparent md:hover:text-blue-700 md:p-0 duration-300 "
+                  className="block py-2 px-3 rounded hover:bg-gray-100 hover:text-main md:hover:bg-transparent  md:p-0 duration-300 "
                 >
                   Pricing
                 </a>
@@ -428,7 +464,7 @@ const Header = () => {
               <li>
                 <a
                   href="#"
-                  className="block py-2 px-3  rounded hover:bg-gray-100 hover:text-black md:hover:bg-transparent md:hover:text-blue-700 md:p-0 duration-300"
+                  className="block py-2 px-3  rounded hover:bg-gray-100 hover:text-main md:hover:bg-transparent  md:p-0 duration-300"
                 >
                   Contact
                 </a>
@@ -530,7 +566,7 @@ const Header = () => {
       >
         <ConfigProvider locale={viVN}>
           <Form layout="vertical" className="space-y-5" onFinish={handleSubmit}>
-            <h2 className="font-bold lg:text-3xl smm:text-xl text-center mb-5">
+            <h2 className="font-bold text-3xl text-center">
               Đăng ký tài khoản Airbnb
             </h2>
             <div className="">
@@ -546,6 +582,7 @@ const Header = () => {
               >
                 <Input
                   name="name"
+                  className="p-2"
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={values.name}
@@ -563,6 +600,7 @@ const Header = () => {
                 help={errors.email && touched.email && errors.email}
               >
                 <Input
+                  className="p-2"
                   name="email"
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -583,6 +621,7 @@ const Header = () => {
                 help={errors.password && touched.password && errors.password}
               >
                 <Input.Password
+                  className="p-2"
                   name="password"
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -601,6 +640,7 @@ const Header = () => {
                 help={errors.phone && touched.phone && errors.phone}
               >
                 <Input
+                  className="p-2"
                   type="tel"
                   name="phone"
                   onChange={handleChange}
@@ -623,6 +663,7 @@ const Header = () => {
                   help={errors.birthday && touched.birthday && errors.birthday}
                 >
                   <DatePicker
+                    className="p-2"
                     placement={"topRight"}
                     name="birthday"
                     // onChange={handleChange}
@@ -648,6 +689,7 @@ const Header = () => {
                   help={errors.gender && touched.gender && errors.gender}
                 >
                   <Select
+                    size="large"
                     name="gender" // Đặt name cho Select
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -662,6 +704,7 @@ const Header = () => {
             </div>
             <div className="mt-9">
               <button
+                onClick={() => setMode("signup")}
                 type="submit"
                 className="cursor-pointer text-white w-full bg-main hover:bg-pink-700 duration-300 px-6 py-2 rounded-lg"
               >
