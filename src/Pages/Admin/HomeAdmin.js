@@ -204,15 +204,6 @@ const HomeAdmin = () => {
           // Ví dụ: fetchSortedData(sorter.field, sorter.order)
         }}
       />
-      <Table
-        dataSource={listUser}
-        columns={columns}
-        pagination={false}
-        onChange={(pagination, filters, sorter) => {
-          // Gọi hàm để tải lại dữ liệu với tham số sắp xếp từ sorter
-          // Ví dụ: fetchSortedData(sorter.field, sorter.order)
-        }}
-      />
       <div className="mb-5"></div>
       <Pagination
         current={currentPage}
@@ -223,7 +214,6 @@ const HomeAdmin = () => {
         showTotal={(total, range) =>
           `${range[0]}-${range[1]} of ${total} items`
         }
-      />
       />
       <div className="py-3 pb-10"></div>
       <Modal
@@ -343,7 +333,6 @@ const HomeAdmin = () => {
                   className="w-full"
                   placeholder="Chọn ngày sinh"
                   format="DD/MM/YYYY"
-                  format="DD/MM/YYYY"
                 />
               </Form.Item>
               <Form.Item
@@ -374,7 +363,6 @@ const HomeAdmin = () => {
               >
                 Huỷ
               </button>
-              <button className="w-full px-5 py-3 text-white transition-colors duration-150 bg-main border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 ">
               <button className="w-full px-5 py-3 text-white transition-colors duration-150 bg-main border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 ">
                 Thêm người dùng
               </button>
