@@ -1,4 +1,5 @@
 import { DatePicker, Form, Input, Modal, Radio, Select, message } from "antd";
+import { DatePicker, Form, Input, Modal, Radio, Select, message } from "antd";
 import { useEffect, useState } from "react";
 import { Admin } from "../../../Services/Admin";
 import { ProFormDatePicker } from "@ant-design/pro-components";
@@ -31,6 +32,23 @@ const formatBirthday = (birthday) => {
   // If the date is in an unknown format or invalid, return a placeholder or handle as needed
   return "Invalid Date";
 };
+import { ProFormDatePicker } from "@ant-design/pro-components";
+import moment from "moment";
+function formatBirthday(date) {
+  // Kiểm tra đầu vào có phải là ngày hợp lệ không
+  if (!date) return undefined;
+
+  // Cố gắng phân tích theo định dạng YYYY-MM-DD
+  let parsedDate = moment(date, "YYYY-MM-DD", true);
+
+  // Nếu không hợp lệ, cố gắng phân tích theo định dạng DD/MM/YYYY
+  if (!parsedDate.isValid()) {
+    parsedDate = moment(date, "DD/MM/YYYY", true);
+  }
+
+  // Nếu ngày đã được phân tích hợp lệ, trả về chuỗi theo định dạng DD/MM/YYYY
+  return parsedDate.isValid() ? parsedDate.format("DD/MM/YYYY") : undefined;
+}
 
 const UserActionButton = ({ userID, renderUserPage }) => {
   const dispatch = useDispatch();
@@ -241,8 +259,26 @@ const UserActionButton = ({ userID, renderUserPage }) => {
                     ]}
                   >
                     <ProFormDatePicker format="DD/MM/YYYY" />
+                    <Input format="DD/MM/YYYY" />
                   </Form.Item>
 
+                  {/* <ProFormDatePicker
+                    width="lg"
+                    name="birthday"
+                    label="Ngày sinh"
+                    initialValue={moment(user?.birthday, [
+                      "YYYY-MM-DD",
+                    ]).format("DD/MM/YYYY")}
+                    // initialValue={user?.birthday}
+                    format="DD/MM/YYYY"
+                    placeholder="Chọn ngày sinh"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng chọn ngày sinh!",
+                      },
+                    ]}
+                  /> */}
                   <Form.Item
                     name="role"
                     label="Chức vụ"
