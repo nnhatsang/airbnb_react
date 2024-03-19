@@ -16,12 +16,12 @@ const LocationAdmin = () => {
   const [form] = Form.useForm();
   const [isSelectedPhoto, setIsSelectedPhoto] = useState(false);
   const [errHinhAnh, setErrHinhAnh] = useState(null);
+  const [isFirstLoad, setIsFirstLoad] = useState(true); // Thêm trạng thái để theo dõi lần tải trang đầu tiên
+  const getCurrentSearchKeyword = () => searchKeyword;
 
   const handleSearchInputChange = (e) => {
     const keyword = e.target.value;
     setSearchKeyword(keyword);
-    // Gọi API với từ khóa tìm kiếm
-    renderLocationPage(1, keyword);
   };
 
   const handleChangeHinhAnh = (evt) => {
@@ -38,14 +38,13 @@ const LocationAdmin = () => {
     setIsSelectedPhoto(true);
     setErrHinhAnh(null);
   };
-  const getCurrentSearchKeyword = () => {
-    return searchKeyword;
-  };
-  const renderLocationPage = (index = 1, searchKeyword) => {
-    dispatch(setLoadingOn());
-    const currentSearchKeyword = searchKeyword || getCurrentSearchKeyword();
 
-    Admin.getLocationPage(index, currentSearchKeyword)
+  const renderLocationPage = (index = 1, searchKeyword) => {
+    if (isFirstLoad) {
+      dispatch(setLoadingOn()); // Chỉ set loading khi đây là lần tải trang đầu tiên
+    }
+
+    Admin.getLocationPage(index, searchKeyword || getCurrentSearchKeyword())
       .then((res) => {
         setListLocation(res.data.content.data);
         setTotalRow(res.data.content.totalRow);
@@ -57,11 +56,18 @@ const LocationAdmin = () => {
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        if (isFirstLoad) {
+          dispatch(setLoadingOff());
+          setIsFirstLoad(false);
+        }
       });
   };
   useEffect(() => {
     renderLocationPage(1, searchKeyword);
   }, [searchKeyword]);
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
     renderLocationPage(page, searchKeyword);
@@ -136,13 +142,13 @@ const LocationAdmin = () => {
           .then((res) => {
             message.success(mess);
             closeModal();
-            renderLocationPage();
+            renderLocationPage(1);
           })
 
           .catch((error) => {
             Admin.deleteLocation(id);
             message.error(error.response.data.content);
-            renderLocationPage();
+            renderLocationPage(1);
           });
       })
       .catch((error) => {

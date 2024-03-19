@@ -22,7 +22,7 @@ const ListRoom = () => {
          );
          setListRoom(filteredRooms);
         // setListRoom(res.data.content);
-        console.log(res.data.content);
+        // console.log(res.data.content);
         dispatch(setLoadingOff());
       })
       .catch((err) => {

@@ -7,7 +7,7 @@ export default function MapLocation({ locationInfo }) {
   // const locationUri = encodeURIComponent(locationInfo?.tenViTri)
 
   return (
-    <div className="sticky w-full" style={{ top, height }}>
+    <div className="sticky w-full" data-aos="flip-down" style={{ top, height }}>
       <div className="mapouter w-full" style={{ height }}>
         <div className="gmap_canvas w-full" style={{ height }}>
           <iframe

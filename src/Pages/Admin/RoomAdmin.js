@@ -27,11 +27,18 @@ const RoomAdmin = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [totalPages, setTotalPages] = useState(1);
   const [totalRow, setTotalRow] = useState();
-
+  const getCurrentSearchKeyword = () => searchKeyword;
+  const [isFirstLoad, setIsFirstLoad] = useState(true); // Thêm trạng thái để theo dõi lần tải trang đầu tiên
+  const handleSearchInputChange = (e) => {
+    const keyword = e.target.value;
+    setSearchKeyword(keyword);
+  };
   const dispatch = useDispatch();
-  const renderRoomPage = (index, searchKeyword = " ") => {
-    dispatch(setLoadingOn());
-    Admin.getRoomPage(index, searchKeyword)
+  const renderRoomPage = (index = 1, searchKeyword) => {
+    if (isFirstLoad) {
+      dispatch(setLoadingOn()); // Chỉ set loading khi đây là lần tải trang đầu tiên
+    }
+    Admin.getRoomPage(index, searchKeyword || getCurrentSearchKeyword())
       .then((res) => {
         setListRoom(res.data.content.data);
         // console.log(res.data.content.data);
@@ -39,13 +46,19 @@ const RoomAdmin = () => {
         setTotalPages(
           Math.ceil(res.data.content.totalRow / res.data.content.pageSize)
         );
-
         dispatch(setLoadingOff());
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        if (isFirstLoad) {
+          dispatch(setLoadingOff());
+          setIsFirstLoad(false);
+        }
       });
   };
+
   const fetchLocation = () => {
     Vitri.get_vi_tri()
       .then((res) => setLocations(res.data.content))
@@ -81,11 +94,11 @@ const RoomAdmin = () => {
 
   useEffect(() => {
     fetchLocation();
-    renderRoomPage(1);
-  }, []);
+    renderRoomPage(1, searchKeyword);
+  }, [searchKeyword]);
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    renderRoomPage(page);
+    renderRoomPage(page, searchKeyword);
   };
   const mapMaViTriToTenViTri = (maViTri, locations) => {
     const location = locations.find((item) => item.id === maViTri);
@@ -154,10 +167,7 @@ const RoomAdmin = () => {
       ),
     },
   ];
-  // const handleRowClick = (record) => {
-  //   window.location.href = `/room-detail/${record.id}`;
-  //   // console.log(`Đã click vào dòng với ID: ${record.id}`);
-  // };
+
   const closeModal = () => {
     setShowModalCreate(false);
   };
@@ -210,8 +220,8 @@ const RoomAdmin = () => {
         <Input
           className="p-2 mb-5"
           placeholder="Nhập từ khóa tìm kiếm..."
-          // onChange={handleSearchInputChange}
-          // value={searchKeyword}
+          onChange={handleSearchInputChange}
+          value={searchKeyword}
         />
       </div>
       <Table

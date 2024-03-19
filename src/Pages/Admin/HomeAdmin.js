@@ -26,45 +26,51 @@ const HomeAdmin = () => {
   const [totalRow, setTotalRow] = useState();
   const [showModalCreate, setShowModalCreate] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const getCurrentSearchKeyword = () => {
-    return searchKeyword;
-  };
-  const handleSearchInputChange = (e) => {
-    const keyword = e.target.value;
-    setSearchKeyword(keyword); // Cập nhật trạng thái từ khóa tìm kiếm
-    renderUserPage(1, keyword); // Gọi lại hàm renderUserPage với từ khóa mới
-  };
+  // Bỏ thêm tham số, sử dụng useEffect để quản lý loading
 
-  const renderUserPage = (index = 1, searchKeyword) => {
-    dispatch(setLoadingOn());
-    // Sử dụng searchKeyword trong lời gọi API để đảm bảo tìm kiếm được thực hiện với từ khóa đúng
-    const currentSearchKeyword = searchKeyword || getCurrentSearchKeyword();
+ const [isFirstLoad, setIsFirstLoad] = useState(true); // Thêm trạng thái để theo dõi lần tải trang đầu tiên
 
-    Admin.getUsersPage(index, currentSearchKeyword)
-      .then((res) => {
-        setListUser(res.data.content.data);
-        // console.log(res.data.content.totalRow);
-        setTotalRow(res.data.content.totalRow);
-        setTotalPages(
-          Math.ceil(res.data.content.totalRow / res.data.content.pageSize)
-        );
-        dispatch(setLoadingOff());
-      })
-      .catch((err) => {
-        console.log(err);
-        dispatch(setLoadingOff());
-      });
-  };
+ const getCurrentSearchKeyword = () => searchKeyword;
 
-  // Sử dụng useEffect để khởi tạo danh sách người dùng với trang đầu tiên và từ khóa tìm kiếm rỗng
-  useEffect(() => {
-    renderUserPage(1, searchKeyword);
-  }, [searchKeyword]);
+ const handleSearchInputChange = (e) => {
+   const keyword = e.target.value;
+   setSearchKeyword(keyword);
+ };
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    renderUserPage(page, searchKeyword);
-  };
+ const renderUserPage = (index = 1, searchKeyword) => {
+   if (isFirstLoad) {
+     dispatch(setLoadingOn()); // Chỉ set loading khi đây là lần tải trang đầu tiên
+   }
+
+   Admin.getUsersPage(index, searchKeyword || getCurrentSearchKeyword())
+     .then((res) => {
+       setListUser(res.data.content.data);
+       setTotalRow(res.data.content.totalRow);
+       setTotalPages(
+         Math.ceil(res.data.content.totalRow / res.data.content.pageSize)
+       );
+     })
+     .catch((err) => {
+       console.log(err);
+     })
+     .finally(() => {
+       if (isFirstLoad) {
+         dispatch(setLoadingOff());
+         setIsFirstLoad(false); // Cập nhật trạng thái sau khi đã tải xong lần đầu
+       }
+     });
+ };
+
+ useEffect(() => {
+   renderUserPage(1, searchKeyword);
+   // Lần đầu tiên useEffect được gọi, isFirstLoad sẽ đảm bảo setLoading được gọi
+ }, [searchKeyword]);
+
+ const handlePageChange = (page) => {
+   setCurrentPage(page);
+   renderUserPage(page, searchKeyword);
+   // Không cần cập nhật trạng thái isLoading ở đây
+ };
 
   const columns = [
     {

@@ -26,7 +26,6 @@
   }
 }
 
-
 @media screen and (min-width: 1024px) and (max-width: 1536px) {
   .banner-responsive {
     width: 100%;
@@ -37,8 +36,8 @@
     }
   }
   .mask {
-      height: 50vh;
-    }
+    height: 50vh;
+  }
 }
 
 @media screen and (min-width: 1536px) {
@@ -50,8 +49,16 @@
       z-index: 1;
     }
   }
-  .mask{
+  .mask {
     height: 80vh;
   }
 }
 
+@media screen and (max-height: 500px) {
+  .image-container {
+    display: none;
+  }
+  .banner-responsive {
+    padding-top: 100px;
+  }
+}

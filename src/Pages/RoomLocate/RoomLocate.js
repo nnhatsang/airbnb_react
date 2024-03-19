@@ -48,45 +48,46 @@ const RoomLocate = () => {
     fetchData();
   }, [cityName, numPeop, dispatch]);
 
-
-
   return (
     <>
       {roomCity.length > 0 ? (
-        <TitlePage title={cityNoSlug} />
-      ) : (
-        <TitlePage
-          title={`Không tìm thấy phòng phù hợp cho bạn tại ${convertDeleteSlug(
-            cityName
-          )} !!!`}
-        />
-      )}
-      <FilterNav />
-      <div className="mx-auto container grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <div className="py-12 space-y-3 h-auto">
-          {roomCity.length > 0 && (
-            <>
-              <p>
-                Có {roomCity.length ?? 0} chỗ ở tại {cityNoSlug} •{" "}
-                {moment(dateRange[0].startDate).format("DD/MM/YYYY")} –{" "}
-                {moment(dateRange[0].endDate).format("DD/MM/YYYY")}
-              </p>
-              <h1 className="font-bold text-3xl text-black">
-                Chỗ ở tại khu vực bản đồ đã chọn
-              </h1>
+        <>
+          <TitlePage title={cityNoSlug} />
+          <FilterNav />
+          <div className="mx-auto container grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <div className="py-12 space-y-3 h-auto">
+              <>
+                <p>
+                  Có {roomCity.length ?? 0} chỗ ở tại {cityNoSlug} •{" "}
+                  {moment(dateRange[0].startDate).format("DD/MM/YYYY")} –{" "}
+                  {moment(dateRange[0].endDate).format("DD/MM/YYYY")}
+                </p>
+                <h1 className="font-bold text-3xl text-black">
+                  Chỗ ở tại khu vực bản đồ đã chọn
+                </h1>
 
-              <div className="space-y-6">
-                {roomCity?.map((i, index) => (
-                  <RoomsLocate item={i} city={cityNoSlug} />
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-        <div className="h-screen w-full block sticky top-28 mt-16">
-          <Gmaps locationInfo={cityNoSlug} />
-        </div>
-      </div>
+                <div className="space-y-6">
+                  {roomCity?.map((i, index) => (
+                    <RoomsLocate item={i} city={cityNoSlug} />
+                  ))}
+                </div>
+              </>
+            </div>
+            <div className="h-screen w-full block sticky top-28 mt-16">
+              <Gmaps locationInfo={cityNoSlug} />
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <TitlePage
+            title={`Không tìm thấy phòng phù hợp cho bạn tại ${convertDeleteSlug(
+              cityName
+            )} !!!`}
+          />
+          <FilterNav />
+        </>
+      )}
     </>
   );
 };

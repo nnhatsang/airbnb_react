@@ -15,8 +15,8 @@ const RoomActionsButton = ({ roomID, renderRoomPage, locations }) => {
   };
   useEffect(() => {
     Admin.get_idPhong(roomID)
-      .then((response) => {
-        setRoom(response.data.content);
+      .then((res) => {
+        setRoom(res.data.content);
         // console.log(location);
       })
       .catch((error) => {
@@ -30,9 +30,6 @@ const RoomActionsButton = ({ roomID, renderRoomPage, locations }) => {
         message.info(response.data.message);
         closeModal();
         renderRoomPage();
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
       })
       .catch((error) => {
         console.log(error);
@@ -80,9 +77,9 @@ const RoomActionsButton = ({ roomID, renderRoomPage, locations }) => {
               setIsChange(false);
               closeUpdateForm();
               renderRoomPage();
-              setTimeout(() => {
-                window.location.reload();
-              }, 1000);
+              // setTimeout(() => {
+              //   window.location.reload();
+              // }, 1000);
             })
             .catch((error) => {
               console.log(error);
@@ -133,7 +130,6 @@ const RoomActionsButton = ({ roomID, renderRoomPage, locations }) => {
             className="w-5 h-5"
             aria-hidden="true"
             fill="currentColor"
-            
             viewBox="0 0 20 20"
           >
             <path
@@ -475,17 +471,17 @@ const RoomActionsButton = ({ roomID, renderRoomPage, locations }) => {
                 <Switch />
               </Form.Item>
             </div>
-            <footer className="flex flex-col items-center justify-end px-6 py-3 -mx-6 -mb-4 space-y-4 sm:space-y-0 sm:space-x-6 sm:flex-row bg-gray-50 dark:bg-gray-800 mt-5">
+            <div className="flex gap-5 items-center justify-end">
               <button
                 onClick={closeUpdateForm}
-                className="w-full px-5 py-3 text-sm font-medium leading-5  text-gray-700 transition-colors duration-150 border border-gray-300 rounded-lg dark:text-gray-400 sm:px-4 sm:py-2 sm:w-auto active:bg-transparent hover:border-gray-500 focus:border-gray-500 active:text-gray-500 focus:outline-none focus:shadow-outline-gray"
+                className="w-full px-5 py-3 transition-colors duration-150 bg-white text-black border border-black-200 rounded-lg sm:w-auto sm:px-4 sm:py-2"
               >
                 Huỷ
               </button>
-              <button className="w-full px-5 py-3 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-primary border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 active:bg-primary hover:bg-primary-dark focus:outline-none focus:shadow-outline-purple">
+              <button className="w-full px-5 py-3 text-white transition-colors duration-150 bg-main border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 ">
                 Cập nhật
               </button>
-            </footer>
+            </div>
           </Form>
         </div>
       </Modal>

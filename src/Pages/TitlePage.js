@@ -15,7 +15,7 @@ const TitlePage = ({ title }) => {
       >
         <div className="mask bg-gradient-dark smm:h-[50vh] md:h-[50vh] lg:h-[40vh] "></div>
         <div className="container z-10  flex justify-center">
-          <p className=" smm:pt-10 text-white lg:text-3xl md:text-xl smm:text-lg  ">
+          <p className=" smm:pt-10 font-bold text-white lg:text-3xl md:text-xl smm:text-lg animate__animated animate__flipInX animate__delay-1s">
             {title}
           </p>
         </div>

@@ -17,7 +17,9 @@ import {
 } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
 import {
+  faCalendarCheck,
   faLocationCrosshairs,
+  faLocationPin,
   faShop,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -68,7 +70,7 @@ const AdminTemplate = () => {
               </Menu.Item>
               <Menu.Item
                 key="/admin/location"
-                icon={<FontAwesomeIcon icon={faLocationCrosshairs} />}
+                icon={<FontAwesomeIcon icon={faLocationPin} />}
               >
                 <Link to={"/admin/location"}>Quản lý vị trí</Link>
               </Menu.Item>
@@ -77,6 +79,12 @@ const AdminTemplate = () => {
                 icon={<FontAwesomeIcon icon={faShop} />}
               >
                 <Link to={"/admin/room"}>Quản lý Room</Link>
+              </Menu.Item>
+              <Menu.Item
+                key="/admin/ticket"
+                icon={<FontAwesomeIcon icon={faCalendarCheck} />}
+              >
+                <Link to={"/admin/ticket"}>Quản lý Booking</Link>
               </Menu.Item>
             </Menu>
           </Sider>
