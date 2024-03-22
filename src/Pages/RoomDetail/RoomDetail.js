@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Phong } from "../../Services/Phong";
 import { Vitri } from "./../../Services/Vitri";
 
@@ -19,6 +19,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 import {
   faAirFreshener,
+  faAward,
   faBacon,
   faHandsWash,
   faKitchenSet,
@@ -42,6 +43,7 @@ import { setLogin, setNumPeop } from "../../Redux/UserSlice";
 import { TabTitle } from "../../Utils/SetTitle";
 import Rating from "./../../Components/Rating/Rating";
 import TitlePage from "../TitlePage";
+import convertToSlug from "../../Utils/convertToSlug";
 
 const options = {
   rangeColors: ["#e0565b"],
@@ -241,8 +243,11 @@ const RoomDetail = () => {
     Phong.get_binhLuan(roomId)
       .then((res) => {
         setComments(res.data.content.reverse());
+
+        console.log(comments);
         const totalSao = res.data.content.reduce(
-          (sum, item) => sum + item.saoBinhLuan
+          (sum, item) => sum + item.saoBinhLuan,
+          0 // initial value for the sum
         );
         if (res.data.content.length === 0) {
           setAvgRate("Chưa có đánh giá");
@@ -274,12 +279,21 @@ const RoomDetail = () => {
         <div className="grid grid-cols-1 gap-5 items-center justify-start md:flex">
           <div className="grid md:flex gap-x-6 gap-y-3">
             <div className="flex gap-x-5">
-              {/* 
-           dkjbdj
-           sdsf
-           sdfsfs
-
-            */}
+              <div className="flex gap-x-6">
+                <span className="space-x-2">
+                  <FontAwesomeIcon
+                    className="w-4 h-4 text-[#FF5A5F]"
+                    icon={faAward}
+                  />
+                  <span className="text-gray-600">Chủ nhà siêu cấp</span>
+                </span>
+              </div>
+              <Link
+                className="underline cursor-pointer text-gray-600 hover:text-[#FF5A5F] duration-300"
+                to={`/rooms/${convertToSlug(room.tinhThanh)}`}
+              >
+                {room.tinhThanh}, {room.quocGia}
+              </Link>
             </div>
             <div className="flex justify-between md:block space-x-6"></div>
           </div>
@@ -488,6 +502,7 @@ const RoomDetail = () => {
                 </div>
                 <div className="">
                   <Rating
+                    avgRate={avgRate}
                     countComment={comments?.length}
                     commentRef={binhLuanRef}
                   />
@@ -605,7 +620,9 @@ const RoomDetail = () => {
             Ẩn bớt tiện nghi
           </button>
         </div>
-        {comments?.length > 0 && <div className="pb-[30px] "></div>}
+        {comments?.length > 0 && (
+          <div ref={binhLuanRef} className="pb-[30px] "></div>
+        )}
         <div className="mb-5 w-full h-px bg-gray-300 "></div>
         {user === null ? (
           <Alert message="Cần đăng nhập để bình luận" type="warning" />

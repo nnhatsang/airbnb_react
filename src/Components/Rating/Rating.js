@@ -6,7 +6,6 @@ const Rating = ({ commentRef, avgRate, countComment }) => {
     <span className="space-x-2 flex items-center justify-center">
       <StarFilled
         className="text-main"
-        // style={{ color: value === "filled" ? "gold" : "gray" }}
       />
       <span className="text-black font-bold">{avgRate}</span>
       <span

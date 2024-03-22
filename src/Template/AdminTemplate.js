@@ -81,10 +81,10 @@ const AdminTemplate = () => {
                 <Link to={"/admin/room"}>Quản lý Room</Link>
               </Menu.Item>
               <Menu.Item
-                key="/admin/ticket"
+                key="/admin/booking"
                 icon={<FontAwesomeIcon icon={faCalendarCheck} />}
               >
-                <Link to={"/admin/ticket"}>Quản lý Booking</Link>
+                <Link to={"/admin/booking"}>Quản lý Booking</Link>
               </Menu.Item>
             </Menu>
           </Sider>

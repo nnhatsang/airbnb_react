@@ -45,7 +45,15 @@ const CardList = ({ hinhAnh, giaTien, tenPhong, moTa, id }) => {
                 </button>
                 {Array.from({ length: 5 }, (_, index) => (
                   <SwiperSlide key={index}>
-                    <img className="swiper-image" src={hinhAnh} alt="" />
+                    <img
+                      className="swiper-image"
+                      src={hinhAnh}
+                      alt=""
+                      onError={(e) => {
+                        e.target.src =
+                          "https://media.istockphoto.com/id/1354776457/vi/vec-to/vector-bi%E1%BB%83u-t%C6%B0%E1%BB%A3ng-h%C3%ACnh-%E1%BA%A3nh-m%E1%BA%B7c-%C4%91%E1%BB%8Bnh-thi%E1%BA%BFu-trang-%E1%BA%A3nh-cho-thi%E1%BA%BFt-k%E1%BA%BF-trang-web-ho%E1%BA%B7c-%E1%BB%A9ng-d%E1%BB%A5ng-di.jpg?s=2048x2048&w=is&k=20&c=woY-tsPITRh2m-wMqZpV110OLAHCv8d7rm4veBlIr-o="; // Replace with your default image path
+                      }}
+                    />
                   </SwiperSlide>
                 ))}
                 <button className="absolute top-3 right-3 z-30">

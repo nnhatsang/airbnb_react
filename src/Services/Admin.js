@@ -41,6 +41,6 @@ export const Admin = {
     API.post(`/api/vi-tri/upload-hinh-vitri?maViTri=${id}`, photo),
 
   // booking
-  getAllBookings: () => API.get("/dat-phong"),
-  deleteBooking: (id) => API.delete(`/dat-phong/${id}`),
+  getAllBookings: () => API.get("/api/dat-phong"),
+  deleteBooking: (id) => API.delete(`/api/dat-phong/${id}`),
 };

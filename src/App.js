@@ -20,6 +20,7 @@ import RoomAdmin from "./Pages/Admin/RoomAdmin";
 
 import { ConfigProvider } from "antd";
 import viVN from "antd/lib/locale/vi_VN";
+import BookingAdmin from "./Pages/Admin/BookingAdmin";
 function App() {
   AOS.init();
   return (
@@ -38,6 +39,7 @@ function App() {
             <Route index element={<HomeAdmin />} />
             <Route path="location" element={<LocationAdmin />} />
             <Route path="room" element={<RoomAdmin />} />
+            <Route path="booking" element={<BookingAdmin />} />
           </Route>
           <Route path="*" element={<PageNotFound />} />
         </Routes>

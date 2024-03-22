@@ -27,13 +27,7 @@ const ListComment = ({ item }) => {
               </span>
               <span className="space-x-1">
                 <span className="text-black font-bold">
-                  {/* {item.saoBinhLuan((i, d) => (
-                    <StarFilled
-                      key={d}
-                      className="text-main"
-                      // style={{ color: value === "filled" ? "gold" : "gray" }}
-                    />
-                  ))} */}
+                 
                   {Array.from({ length: item.saoBinhLuan }, (_, d) => (
                     <StarFilled
                       key={d}
