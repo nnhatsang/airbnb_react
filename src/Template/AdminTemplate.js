@@ -54,7 +54,7 @@ const AdminTemplate = () => {
             collapsed={collapsed}
             breakpoint="md" // Chỉ định điểm giữa hiển thị và ẩn menu trên màn hình di động
             collapsedWidth="0" // Thiết lập chiều rộng của menu khi bị thu gọn
-            style={{ background: "#FE6B6E" }} // Thiết lập màu nền cho Sider
+            style={{ background: "#3d2727" }} // Thiết lập màu nền cho Sider
           >
             <div className="demo-logo-vertical pt-5" />
             <Menu
@@ -63,28 +63,36 @@ const AdminTemplate = () => {
               defaultSelectedKeys={[location.pathname]}
               // defaultSelectedKeys={["/admin"]}
               className="space-y-5"
-              style={{ background: "#FE6B6E" }} // Thiết lập màu nền cho Sider
+              style={{ background: "#3d2727" }} // Thiết lập màu nền cho Sider
             >
               <Menu.Item key="/admin" icon={<UserOutlined />}>
-                <Link to={"/admin"}>Quản lý người dùng</Link>
+                <Link to={"/admin"} className="text-white font-bold">
+                  Quản lý người dùng
+                </Link>
               </Menu.Item>
               <Menu.Item
                 key="/admin/location"
                 icon={<FontAwesomeIcon icon={faLocationPin} />}
               >
-                <Link to={"/admin/location"}>Quản lý vị trí</Link>
+                <Link to={"/admin/location"} className="text-white font-bold">
+                  Quản lý vị trí
+                </Link>
               </Menu.Item>
               <Menu.Item
                 key="/admin/room"
-                icon={<FontAwesomeIcon icon={faShop} />}
+                icon={<FontAwesomeIcon color="white" icon={faShop} />}
               >
-                <Link to={"/admin/room"}>Quản lý Room</Link>
+                <Link to={"/admin/room"} className="text-white font-bold">
+                  Quản lý Room
+                </Link>
               </Menu.Item>
               <Menu.Item
                 key="/admin/booking"
                 icon={<FontAwesomeIcon icon={faCalendarCheck} />}
               >
-                <Link to={"/admin/booking"}>Quản lý Booking</Link>
+                <Link to={"/admin/booking"} className="text-white font-bold">
+                  Quản lý Booking
+                </Link>
               </Menu.Item>
             </Menu>
           </Sider>
@@ -92,7 +100,7 @@ const AdminTemplate = () => {
             <Header
               style={{
                 padding: 0,
-                background: "#FE6B6E", // Bạn có thể thay đổi màu nền này theo mong muốn
+                background: "#3d2727", // Bạn có thể thay đổi màu nền này theo mong muốn
               }}
             >
               <div className="flex justify-between items-center">

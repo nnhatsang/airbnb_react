@@ -224,7 +224,7 @@ const Header = () => {
               src={user.avatar}
               onError={onImageError}
             />
-            <span className=" ml-3 smm:text-white leading-7 uppercase ">
+            <span className=" ml-3 smm:text-white leading-7 uppercase smm:w-28 truncate ">
               {user.name}
             </span>
           </button>

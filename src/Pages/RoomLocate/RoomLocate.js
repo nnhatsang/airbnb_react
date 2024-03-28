@@ -31,7 +31,6 @@ const RoomLocate = () => {
         );
         setCityNoSlug(data[0].tinhThanh);
 
-        // Lấy danh sách phòng theo địa điểm
         const phongRes = await Phong.get_datPhongTheoViTri(data[0].id);
         const filteredRooms = phongRes.data.content.filter(
           (room) => room.khach >= numPeop
